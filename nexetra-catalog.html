@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexetra Enterprise Course Catalog</title>
+  <style>
+    :root {
+      --c-data:    #0284c7;
+      --c-change:  #7c3aed;
+      --c-cloud:   #0891b2;
+      --c-dev:     #16a34a;
+      --c-prod:    #db2777;
+      --c-sales:   #ea580c;
+      --c-sec:     #dc2626;
+      --c-skills:  #0f766e;
+      --sidebar: 272px;
+      --radius: .75rem;
+      --shadow: 0 1px 3px rgba(0,0,0,.07), 0 4px 14px rgba(0,0,0,.06);
+      --shadow-h: 0 4px 14px rgba(0,0,0,.13), 0 10px 30px rgba(0,0,0,.09);
+      --tr: all .17s ease;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f4f8; color: #1e293b; min-height: 100vh; line-height: 1.5; }
+
+    /* HEADER */
+    header { background: #0c1220; color: #fff; padding: 0 2rem; display: flex; align-items: center; gap: 1rem; position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 12px rgba(0,0,0,.4); height: 62px; }
+    .logo { font-size: 1.25rem; font-weight: 800; letter-spacing: -.5px; }
+    .logo span { color: #818cf8; }
+    .logo-sub { font-size: .72rem; color: #64748b; letter-spacing: .02em; }
+    .header-right { margin-left: auto; display: flex; align-items: center; gap: 1.5rem; }
+    .hbadge { font-size: .72rem; background: rgba(129,140,248,.15); color: #a5b4fc; border: 1px solid rgba(129,140,248,.25); padding: .22rem .65rem; border-radius: 999px; }
+    .hcount { font-size: .82rem; color: #94a3b8; }
+    .hcount strong { color: #e2e8f0; font-size: .95rem; }
+
+    /* INCENTIVE BANNER */
+    .banner { background: linear-gradient(90deg, #312e81 0%, #1e3a5f 100%); color: #e0e7ff; font-size: .78rem; padding: .55rem 2rem; display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+    .banner strong { color: #c7d2fe; }
+    .banner-sep { color: #4c1d95; }
+
+    /* LAYOUT */
+    .layout { display: flex; max-width: 1800px; margin: 0 auto; }
+
+    /* SIDEBAR */
+    aside { width: var(--sidebar); flex-shrink: 0; background: #fff; border-right: 1px solid #e2e8f0; padding: 1.1rem 1rem 2rem; position: sticky; top: 62px; height: calc(100vh - 62px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+    aside::-webkit-scrollbar { width: 4px; }
+    aside::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+
+    .search-wrap { position: relative; margin-bottom: 1rem; }
+    .search-icon { position: absolute; left: .65rem; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: #94a3b8; pointer-events: none; }
+    #q { width: 100%; padding: .58rem .7rem .58rem 2.1rem; border: 1.5px solid #e2e8f0; border-radius: .5rem; font-size: .82rem; background: #f8fafc; outline: none; transition: var(--tr); color: #1e293b; }
+    #q:focus { border-color: #818cf8; background: #fff; box-shadow: 0 0 0 3px rgba(129,140,248,.15); }
+    .clear-q { position: absolute; right: .4rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 1rem; line-height: 1; padding: .2rem; display: none; }
+    .clear-q:hover { color: #334155; }
+
+    .fg { margin-bottom: 1.05rem; padding-bottom: 1.05rem; border-bottom: 1px solid #f1f5f9; }
+    .fg:last-of-type { border-bottom: none; margin-bottom: 0; }
+    .fg-title { font-size: .63rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: #94a3b8; margin-bottom: .55rem; }
+    .fo { display: flex; align-items: center; gap: .45rem; padding: .22rem .3rem; border-radius: .375rem; cursor: pointer; font-size: .79rem; color: #334155; user-select: none; transition: background .12s; }
+    .fo:hover { background: #f1f5f9; }
+    .fo input[type=checkbox] { width: 13px; height: 13px; accent-color: #4f46e5; cursor: pointer; flex-shrink: 0; }
+    .fo .cnt { margin-left: auto; font-size: .67rem; color: #94a3b8; min-width: 16px; text-align: right; }
+    .fo .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-data   { background: var(--c-data); }
+    .dot-change { background: var(--c-change); }
+    .dot-cloud  { background: var(--c-cloud); }
+    .dot-dev    { background: var(--c-dev); }
+    .dot-prod   { background: var(--c-prod); }
+    .dot-sales  { background: var(--c-sales); }
+    .dot-sec    { background: var(--c-sec); }
+    .dot-skills { background: var(--c-skills); }
+
+    .reset-btn { width: 100%; margin-top: .6rem; padding: .46rem; background: none; border: 1.5px solid #e2e8f0; border-radius: .5rem; font-size: .78rem; color: #64748b; cursor: pointer; transition: var(--tr); }
+    .reset-btn:hover { border-color: #94a3b8; background: #f8fafc; color: #1e293b; }
+
+    #chips { display: flex; flex-wrap: wrap; gap: .3rem; margin-bottom: .7rem; }
+    .chip { display: inline-flex; align-items: center; gap: .3rem; font-size: .7rem; background: #ede9fe; color: #6d28d9; padding: .18rem .5rem; border-radius: 999px; cursor: pointer; border: none; transition: background .12s; }
+    .chip:hover { background: #ddd6fe; }
+
+    /* MAIN */
+    main { flex: 1; min-width: 0; padding: 1.2rem 1.5rem; }
+
+    .results-bar { display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .rlabel { font-size: .82rem; color: #64748b; }
+    .rlabel strong { color: #1e293b; font-size: .95rem; }
+    .sort-wrap { margin-left: auto; display: flex; align-items: center; gap: .4rem; }
+    .sort-wrap label { font-size: .75rem; color: #64748b; }
+    #sort { font-size: .78rem; border: 1.5px solid #e2e8f0; border-radius: .4rem; padding: .3rem .55rem; background: #fff; color: #334155; outline: none; cursor: pointer; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.05rem; }
+
+    .sec-div { grid-column: 1/-1; display: flex; align-items: center; gap: .75rem; padding: .5rem 0 .3rem; margin-top: .35rem; }
+    .sec-div h2 { font-size: .71rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; white-space: nowrap; }
+    .sec-div hr { flex: 1; border: none; border-top: 1.5px solid #e2e8f0; }
+
+    /* CARD */
+    .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid #e9eef4; display: flex; flex-direction: column; transition: box-shadow .2s, transform .2s; overflow: hidden; }
+    .card:hover { box-shadow: var(--shadow-h); transform: translateY(-2px); }
+
+    .card-stripe { height: 4px; flex-shrink: 0; }
+    .card-stripe.data   { background: var(--c-data); }
+    .card-stripe.change { background: var(--c-change); }
+    .card-stripe.cloud  { background: var(--c-cloud); }
+    .card-stripe.dev    { background: var(--c-dev); }
+    .card-stripe.prod   { background: var(--c-prod); }
+    .card-stripe.sales  { background: var(--c-sales); }
+    .card-stripe.sec    { background: var(--c-sec); }
+    .card-stripe.skills { background: var(--c-skills); }
+
+    .card-body { padding: .95rem 1.1rem; flex: 1; }
+
+    .card-meta { display: flex; align-items: center; gap: .4rem; margin-bottom: .55rem; flex-wrap: wrap; }
+
+    .cat-badge { font-size: .61rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: .16rem .48rem; border-radius: 999px; flex-shrink: 0; white-space: nowrap; }
+    .cat-badge.data   { background: #e0f2fe; color: #0369a1; }
+    .cat-badge.change { background: #ede9fe; color: #5b21b6; }
+    .cat-badge.cloud  { background: #e0f7fa; color: #0e7490; }
+    .cat-badge.dev    { background: #dcfce7; color: #15803d; }
+    .cat-badge.prod   { background: #fce7f3; color: #9d174d; }
+    .cat-badge.sales  { background: #fff7ed; color: #9a3412; }
+    .cat-badge.sec    { background: #fee2e2; color: #991b1b; }
+    .cat-badge.skills { background: #ccfbf1; color: #0f766e; }
+
+    .brand-badge { font-size: .61rem; padding: .15rem .45rem; border-radius: 999px; border: 1px solid #e2e8f0; color: #64748b; background: #f8fafc; white-space: nowrap; }
+    .brand-badge.cc   { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+    .brand-badge.atm  { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+    .brand-badge.gh   { background: #f8fafc; color: #1f2937; border-color: #d1d5db; }
+    .brand-badge.cert { background: #f5f3ff; color: #5b21b6; border-color: #ddd6fe; }
+    .brand-badge.boot { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+
+    .depth-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .depth-dot.substantive { background: #22c55e; }
+    .depth-dot.minimal     { background: #f59e0b; }
+    .depth-dot.blank       { background: #e2e8f0; }
+
+    .card-title { font-size: .93rem; font-weight: 700; color: #0f172a; line-height: 1.3; margin-bottom: .4rem; }
+    .card-desc  { font-size: .77rem; color: #64748b; line-height: 1.55; margin-bottom: .8rem; }
+
+    /* incentive strip */
+    .incentive { display: flex; align-items: center; gap: .4rem; background: #fefce8; border: 1px solid #fde68a; border-radius: .4rem; padding: .32rem .6rem; font-size: .71rem; color: #713f12; margin-bottom: .8rem; }
+    .incentive svg { width: 12px; height: 12px; color: #d97706; flex-shrink: 0; }
+
+    /* CARD FOOT */
+    .card-foot { padding: .75rem 1.1rem; border-top: 1px solid #f1f5f9; display: flex; align-items: center; gap: .6rem; background: #fafbfc; flex-wrap: wrap; }
+    .price { font-size: 1rem; font-weight: 800; color: #0f172a; }
+    .price-orig { font-size: .72rem; color: #94a3b8; text-decoration: line-through; margin-left: .1rem; }
+    .btn-enroll { background: #4f46e5; color: #fff; border: none; padding: .44rem .9rem; border-radius: .45rem; font-size: .75rem; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; transition: background .14s; margin-left: auto; }
+    .btn-enroll:hover { background: #4338ca; }
+    .btn-gh { font-size: .75rem; color: #64748b; text-decoration: none; display: inline-flex; align-items: center; gap: .25rem; white-space: nowrap; transition: color .14s; }
+    .btn-gh:hover { color: #1e293b; }
+    .btn-gh svg { width: 14px; height: 14px; }
+    .team-note { font-size: .67rem; color: #94a3b8; width: 100%; padding-top: .1rem; }
+
+    mark { background: #fef08a; border-radius: 2px; padding: 0 1px; color: inherit; }
+
+    .empty { grid-column: 1/-1; text-align: center; padding: 4rem 2rem; color: #64748b; }
+    .empty h3 { font-size: 1.1rem; color: #334155; margin-bottom: .5rem; }
+
+    @media (max-width: 860px) { aside { display: none; } main { padding: 1rem; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">Nexe<span>tra</span></div>
+    <div class="logo-sub">Enterprise Course Catalog</div>
+  </div>
+  <div class="header-right">
+    <span class="hbadge">72 courses · 8 categories</span>
+    <span class="hcount">Showing <strong id="hcount">72</strong></span>
+  </div>
+</header>
+
+<div class="banner">
+  <span>🎁 <strong>Bundle deal:</strong> Enroll in 3+ courses from any category and save 20%</span>
+  <span class="banner-sep">|</span>
+  <span>👥 <strong>Team pricing:</strong> 5+ seats unlocks 25% off — contact us</span>
+  <span class="banner-sep">|</span>
+  <span>🔗 <strong>Referral:</strong> Share your unique link and earn $150 credit per new enrollment</span>
+  <span class="banner-sep">|</span>
+  <span>⚡ <strong>Early bird:</strong> 10% off any course when paid 30 days before start date</span>
+</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="8.5" cy="8.5" r="5.5"/><path d="M15 15l-3-3"/>
+      </svg>
+      <input id="q" type="search" placeholder="Search titles, topics, skills…" autocomplete="off">
+      <button class="clear-q" id="clearQ" title="Clear">✕</button>
+    </div>
+
+    <div id="chips"></div>
+
+    <div class="fg">
+      <div class="fg-title">Category</div>
+      <label class="fo"><input type="checkbox" data-filter="cat" value="data">   <span class="dot dot-data"></span>   AI Data Analysis    <span class="cnt" id="cnt-cat-data">10</span></label>
+      <label class="fo"><input type="checkbox" data-filter="cat" value="change"> <span class="dot dot-change"></span> Change Management   <span class="cnt" id="cnt-cat-change">5</span></label>
+      <label class="fo"><input type="checkbox" data-filter="cat" value="cloud">  <span class="dot dot-cloud"></span>  Cloud Migration     <span class="cnt" id="cnt-cat-cloud">6</span></label>
+      <label class="fo"><input type="checkbox" data-filter="cat" value="dev">    <span class="dot dot-dev"></span>    Developer Up-skilling <span class="cnt" id="cnt-cat-dev">30</span></label>
+      <label class="fo"><input type="checkbox" data-filter="cat" value="prod">   <span class="dot dot-prod"></span>   Productivity &amp; AI  <span class="cnt" id="cnt-cat-prod">8</span></label>
+      <label class="fo"><input type="checkbox" data-filter="cat" value="sales">  <span class="dot dot-sales"></span>  Sales Enablement    <span class="cnt" id="cnt-cat-sales">5</span></label>
+      <label class="fo"><input type="checkbox" data-filter="cat" value="sec">    <span class="dot dot-sec"></span>    Security Readiness  <span class="cnt" id="cnt-cat-sec">3</span></label>
+      <label class="fo"><input type="checkbox" data-filter="cat" value="skills"> <span class="dot dot-skills"></span> Skills Gap Analysis <span class="cnt" id="cnt-cat-skills">5</span></label>
+    </div>
+
+    <div class="fg">
+      <div class="fg-title">Content Provider</div>
+      <label class="fo"><input type="checkbox" data-filter="brand" value="cc">   Cloud Contraptions <span class="cnt" id="cnt-brand-cc">28</span></label>
+      <label class="fo"><input type="checkbox" data-filter="brand" value="atm">  Atmosera           <span class="cnt" id="cnt-brand-atm">10</span></label>
+      <label class="fo"><input type="checkbox" data-filter="brand" value="gh">   GitHub Training    <span class="cnt" id="cnt-brand-gh">7</span></label>
+      <label class="fo"><input type="checkbox" data-filter="brand" value="cert"> Certification Path <span class="cnt" id="cnt-brand-cert">5</span></label>
+      <label class="fo"><input type="checkbox" data-filter="brand" value="boot"> Bootcamp           <span class="cnt" id="cnt-brand-boot">3</span></label>
+      <label class="fo"><input type="checkbox" data-filter="brand" value="other">Other              <span class="cnt" id="cnt-brand-other">4</span></label>
+    </div>
+
+    <div class="fg">
+      <div class="fg-title">Price Range</div>
+      <label class="fo"><input type="checkbox" data-filter="tier" value="under500"> Under $500     <span class="cnt" id="cnt-tier-under500"></span></label>
+      <label class="fo"><input type="checkbox" data-filter="tier" value="500to700"> $500 – $700   <span class="cnt" id="cnt-tier-500to700"></span></label>
+      <label class="fo"><input type="checkbox" data-filter="tier" value="700to1000">$700 – $1,000 <span class="cnt" id="cnt-tier-700to1000"></span></label>
+      <label class="fo"><input type="checkbox" data-filter="tier" value="over1000"> Over $1,000   <span class="cnt" id="cnt-tier-over1000"></span></label>
+    </div>
+
+    <div class="fg">
+      <div class="fg-title">Content Depth</div>
+      <label class="fo"><input type="checkbox" data-filter="depth" value="substantive">
+        <span class="depth-dot substantive"></span> Substantive <span class="cnt" id="cnt-depth-substantive">39</span></label>
+      <label class="fo"><input type="checkbox" data-filter="depth" value="minimal">
+        <span class="depth-dot minimal"></span> Minimal / Title-only <span class="cnt" id="cnt-depth-minimal">16</span></label>
+      <label class="fo"><input type="checkbox" data-filter="depth" value="blank">
+        <span class="depth-dot blank"></span> Outline only <span class="cnt" id="cnt-depth-blank">2</span></label>
+    </div>
+
+    <div class="fg">
+      <div class="fg-title">Technology Focus</div>
+      <label class="fo"><input type="checkbox" data-filter="tech" value="rust">    Rust        <span class="cnt"></span></label>
+      <label class="fo"><input type="checkbox" data-filter="tech" value="python">  Python      <span class="cnt"></span></label>
+      <label class="fo"><input type="checkbox" data-filter="tech" value="azure">   Azure       <span class="cnt"></span></label>
+      <label class="fo"><input type="checkbox" data-filter="tech" value="dotnet">  .NET        <span class="cnt"></span></label>
+      <label class="fo"><input type="checkbox" data-filter="tech" value="github">  GitHub      <span class="cnt"></span></label>
+      <label class="fo"><input type="checkbox" data-filter="tech" value="sql">     PostgreSQL/SQL <span class="cnt"></span></label>
+      <label class="fo"><input type="checkbox" data-filter="tech" value="ai">      AI / LLM    <span class="cnt"></span></label>
+      <label class="fo"><input type="checkbox" data-filter="tech" value="airflow"> Airflow     <span class="cnt"></span></label>
+    </div>
+
+    <button class="reset-btn" id="resetBtn">Reset all filters</button>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+    <div class="results-bar">
+      <div class="rlabel">Showing <strong id="rcount">72</strong> of 72 courses</div>
+      <div class="sort-wrap">
+        <label for="sort">Sort:</label>
+        <select id="sort">
+          <option value="default">Default order</option>
+          <option value="price-asc">Price: low → high</option>
+          <option value="price-desc">Price: high → low</option>
+          <option value="alpha">A → Z</option>
+          <option value="depth">Substantive first</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+// cat keys: data | change | cloud | dev | prod | sales | sec | skills
+// brand keys: cc | atm | gh | cert | boot | other
+// depth: substantive | minimal | blank
+// tech tags: rust python azure dotnet github sql ai airflow
+
+const COURSES = [
+// ── AI DATA ANALYSIS ──
+{ slug:'course-amazon-rds-for-postgresql',               cat:'data',   brand:'cc',   depth:'substantive', price:497,  title:'Amazon RDS for PostgreSQL',                                    desc:'Master managed PostgreSQL on AWS — provisioning, parameter groups, Multi-AZ, read replicas, performance insights, and production-grade backup strategies.',                                                                tags:['sql','python'] },
+{ slug:'course-azure-postgresql-flexible-server',        cat:'data',   brand:'cc',   depth:'substantive', price:547,  title:'Azure PostgreSQL Flexible Server',                             desc:'Deploy and optimise Azure Database for PostgreSQL Flexible Server — connection pooling with PgBouncer, read replicas, intelligent performance recommendations, and security hardening.',                                 tags:['sql','azure'] },
+{ slug:'course-data-analytics-bootcamp',                 cat:'data',   brand:'boot', depth:'minimal',     price:997,  title:'Data Analytics Bootcamp',                                      desc:'Intensive hands-on bootcamp covering the full data analytics lifecycle: ingestion, cleaning, transformation, statistical analysis, and executive-level dashboarding.',                                                    tags:['python','sql'] },
+{ slug:'course-data-engineering-automation-ansible-apache-airflow', cat:'data', brand:'cc', depth:'substantive', price:697, title:'Data Engineering Automation with Ansible & Apache Airflow', desc:'Automate complex data engineering infrastructure with Ansible playbooks and orchestrate scalable DAG-based pipelines using Apache Airflow in production environments.',                                                  tags:['python','airflow'] },
+{ slug:'course-jupyter-widgets-programming',             cat:'data',   brand:'cc',   depth:'substantive', price:397,  title:'Jupyter Widgets Programming',                                  desc:'Build interactive, production-ready data exploration tools using ipywidgets, custom widget development, Layout/Box model, and integration with plotly and matplotlib.',                                                    tags:['python'] },
+{ slug:'course-postgresql-for-administrators',           cat:'data',   brand:'cc',   depth:'substantive', price:547,  title:'PostgreSQL for Administrators',                                desc:'Deep-dive into PostgreSQL DBA skills — WAL management, autovacuum tuning, connection pooling with PgBouncer, query plan analysis, replication, and disaster recovery.',                                                  tags:['sql'] },
+{ slug:'course-postgresql-for-python-programmers',       cat:'data',   brand:'cc',   depth:'substantive', price:497,  title:'PostgreSQL for Python Programmers',                            desc:'Integrate PostgreSQL with Python applications using psycopg2, SQLAlchemy ORM, asyncpg async drivers, connection pooling, transactions, and migration tools like Alembic.',                                              tags:['sql','python'] },
+{ slug:'course-postgresql-stored-procedures-and-functions', cat:'data', brand:'cc',  depth:'substantive', price:447,  title:'PostgreSQL Stored Procedures & Functions',                     desc:'Write, test, and optimise PL/pgSQL functions and stored procedures — covering exception handling, cursors, trigger design, and performance profiling with EXPLAIN.',                                                    tags:['sql'] },
+{ slug:'course-practical-apache-spark-for-data-pipelines',  cat:'data', brand:'cc',  depth:'substantive', price:597,  title:'Practical Apache Spark for Data Pipelines',                   desc:'Build and deploy production Spark data pipelines using PySpark — partitioning, caching, broadcast joins, structured streaming, Delta Lake, and cluster tuning on cloud environments.',                                  tags:['python','airflow'] },
+{ slug:'course-python-primer-for-data-science-and-machine-learnin', cat:'data', brand:'atm', depth:'substantive', price:597, title:'Python Primer for Data Science & Machine Learning',   desc:'Establish solid Python foundations for AI/ML — NumPy, pandas, matplotlib, seaborn, and scikit-learn with applied data science projects from real business datasets.',                                                   tags:['python','ai'] },
+
+// ── CHANGE MANAGEMENT ──
+{ slug:'course-change-leadership-for-digital-transformation',             cat:'change', brand:'cc',  depth:'substantive', price:697, title:'Change Leadership for Digital Transformation',             desc:'Develop executive-level change leadership capabilities — stakeholder alignment, vision communication, adoption roadmaps, and navigating cultural resistance during large-scale digital programmes.',      tags:[] },
+{ slug:'course-enterprise-change-governance-and-benefits-realisation',   cat:'change', brand:'cc',  depth:'substantive', price:797, title:'Enterprise Change Governance & Benefits Realisation',       desc:'Establish robust governance structures for enterprise change programmes, track benefits realisation, and deliver board-level reporting that demonstrates measurable programme value.',                      tags:[] },
+{ slug:'course-leading-organisational-change-for-ai-adoption',           cat:'change', brand:'cc',  depth:'substantive', price:697, title:'Leading Organisational Change for AI Adoption',             desc:'Build the change management competencies to successfully embed AI tools across an enterprise — addressing cultural resistance, capability gaps, and the human side of AI transformation.',               tags:['ai'] },
+{ slug:'course-managing-resistance-and-building-change-champions',       cat:'change', brand:'cc',  depth:'substantive', price:597, title:'Managing Resistance & Building Change Champions',           desc:'Identify resistance patterns at all levels, convert sceptics into advocates, design champion networks, and sustain momentum through the full lifecycle of organisational change.',                          tags:[] },
+{ slug:'course-prosci-inspired-change-management-practitioner',          cat:'change', brand:'cc',  depth:'substantive', price:797, title:'Prosci-Inspired Change Management Practitioner',            desc:'Apply structured change management frameworks inspired by Prosci ADKAR methodology to real programmes — building practitioner-level competency with tools, templates, and coaching techniques.',           tags:[] },
+
+// ── CLOUD MIGRATION ──
+{ slug:'course-azure-administrator',          cat:'cloud', brand:'cert', depth:'minimal',     price:897,  title:'Azure Administrator (AZ-104 Prep)',     desc:'Comprehensive preparation for the Microsoft AZ-104 Azure Administrator certification — identity and governance, storage, virtual machines, virtual networking, and monitoring at scale.',              tags:['azure'] },
+{ slug:'course-azure-data-engineer',          cat:'cloud', brand:'cert', depth:'minimal',     price:997,  title:'Azure Data Engineer (DP-203 Prep)',      desc:'Master Azure data engineering for the DP-203 certification — Azure Data Factory, Databricks, Synapse Analytics, stream analytics, and enterprise data lake design.',                                      tags:['azure','sql'] },
+{ slug:'course-azure-solutions-architect',    cat:'cloud', brand:'cert', depth:'minimal',     price:1197, title:'Azure Solutions Architect (AZ-305 Prep)',desc:'Expert-level preparation for AZ-305 — high-availability architecture, hybrid identity, data platform selection, migration strategy, and governance at enterprise scale.',                                  tags:['azure'] },
+{ slug:'course-cicd-using-azure-pipelines',   cat:'cloud', brand:'atm',  depth:'substantive', price:697,  title:'CI/CD Using Azure Pipelines',           desc:'Design, build, and deploy continuous integration and delivery pipelines with Azure DevOps Pipelines — from starter YAML to multi-stage enterprise release workflows with approvals and environments.',   tags:['azure','github'] },
+{ slug:'course-devops-bootcamp',              cat:'cloud', brand:'boot', depth:'minimal',     price:1197, title:'DevOps Bootcamp',                       desc:'Intensive bootcamp covering Git, Docker, Kubernetes, CI/CD pipelines, infrastructure as code with Terraform, and observability tooling in a hands-on cloud environment.',                                    tags:['github'] },
+{ slug:'course-kubernetes-programmers',       cat:'cloud', brand:'other',depth:'minimal',     price:647,  title:'Kubernetes for Programmers',            desc:'Understand and deploy applications on Kubernetes — pods, deployments, services, ingress controllers, ConfigMaps, Secrets, RBAC, HPA, and Helm chart packaging.',                                             tags:[] },
+
+// ── DEVELOPER UP-SKILLING ──
+{ slug:'course-apache-airflow-administration-scalable-workflow-au',       cat:'dev', brand:'cc',   depth:'substantive', price:597, title:'Apache Airflow Administration: Scalable Workflow Automation', desc:'Configure, maintain, and scale Apache Airflow — CeleryExecutor and KubernetesExecutor, XCom, SLA management, DAG versioning, role-based access, and production monitoring with Grafana.',         tags:['python','airflow'] },
+{ slug:'course-apache-airflow-programming-developing-configuring-',       cat:'dev', brand:'cc',   depth:'substantive', price:597, title:'Apache Airflow Programming: Developing & Configuring Workflows', desc:'Write production-grade Airflow DAGs using Python operators, sensors, hooks, SubDAGs, TaskGroups, custom plugins, dynamic DAG generation, and XCom patterns.',                                     tags:['python','airflow'] },
+{ slug:'course-build-net-10-web-apps-with-blazor',                        cat:'dev', brand:'cc',   depth:'substantive', price:547, title:'Build .NET 10 Web Apps with Blazor',                          desc:'Create modern web applications using Blazor WebAssembly and Blazor Server with .NET 10 — components, state management, forms validation, JS interop, and deployment to Azure App Service.',           tags:['dotnet'] },
+{ slug:'course-build-net-10-web-apps-with-blazor-and-minimal-api',        cat:'dev', brand:'cc',   depth:'substantive', price:597, title:'Build .NET 10 Web Apps with Blazor & Minimal API',            desc:'Combine Blazor frontends with .NET 10 Minimal API backends for lightweight, high-performance full-stack web applications with OpenAPI documentation and middleware pipelines.',                       tags:['dotnet'] },
+{ slug:'course-build-net-10-web-apps-with-blazor-and-web-api',            cat:'dev', brand:'cc',   depth:'substantive', price:597, title:'Build .NET 10 Web Apps with Blazor & Web API',               desc:'Build enterprise-grade full-stack applications using Blazor UI and ASP.NET Core Web API — Entity Framework Core, JWT authentication, role-based authorisation, and cloud deployment.',                tags:['dotnet'] },
+{ slug:'course-distributed-task-automation-with-python-celery-and',       cat:'dev', brand:'cc',   depth:'substantive', price:547, title:'Distributed Task Automation with Python & Celery',           desc:'Implement distributed task queues using Celery with Redis/RabbitMQ — task routing, retries, chords, chains, rate limiting, beat scheduling, and monitoring with Flower.',                             tags:['python'] },
+{ slug:'course-distributed-task-automation-with-python-faust-and-',       cat:'dev', brand:'cc',   depth:'substantive', price:547, title:'Distributed Task Automation with Python & Faust',            desc:'Build high-throughput stream processing applications with Faust — Kafka-based streaming, table state management, timers, cron jobs, and real-time distributed workloads in Python.',                  tags:['python'] },
+{ slug:'course-fundamentals-of-deep-learning-and-development-of-g',       cat:'dev', brand:'other',depth:'blank',       price:497, title:'Fundamentals of Deep Learning & GPU Development',           desc:'Explore the mathematical foundations of neural networks and GPU-accelerated model training — covering backpropagation, CNNs, RNNs, and PyTorch-based GPU programming.',                               tags:['python','ai'] },
+{ slug:'course-github-developers-training',                                cat:'dev', brand:'gh',   depth:'minimal',     price:397, title:'GitHub for Developers Training',                             desc:'Master the GitHub developer workflow — branching strategies, pull requests, code review, merge vs. rebase, GitHub Actions CI/CD basics, and collaborative development at scale.',                      tags:['github'] },
+{ slug:'course-github-developers-training-13572',                          cat:'dev', brand:'gh',   depth:'minimal',     price:397, title:'GitHub Developers Training — Advanced',                      desc:'Advanced GitHub techniques: repository security, branch protection rules, required status checks, CODEOWNERS, dependency management, and advanced Actions workflow patterns.',                         tags:['github'] },
+{ slug:'course-github-developers-training-21151',                          cat:'dev', brand:'gh',   depth:'minimal',     price:397, title:'GitHub Developers Training — Team Edition',                 desc:'GitHub collaboration for development teams: project boards, milestones, issue templates, PR templates, team permissions, and inner-source workflows for enterprise organisations.',                     tags:['github'] },
+{ slug:'course-github-developers-training-3838',                           cat:'dev', brand:'gh',   depth:'substantive', price:497, title:'GitHub Developers Training — Pro',                          desc:'Professional GitHub workflows covering advanced Actions, reusable workflows, self-hosted runners, container registries, Dependabot configuration, and GitHub Packages integration.',                   tags:['github'] },
+{ slug:'course-github-developers-training-42107',                          cat:'dev', brand:'gh',   depth:'minimal',     price:497, title:'GitHub Developers Training — Enterprise',                   desc:'GitHub Enterprise administration and developer productivity — EMU setup, SAML SSO, audit logs, enterprise-wide policies, Copilot for Business rollout, and compliance reporting.',                     tags:['github'] },
+{ slug:'course-github-developers-training-v2',                             cat:'dev', brand:'gh',   depth:'blank',       price:397, title:'GitHub Developers Training v2',                             desc:'Updated GitHub training curriculum covering next-generation workflows including GitHub Copilot integration, AI-assisted code review, and modern DevSecOps practices.',                                 tags:['github','ai'] },
+{ slug:'course-github-for-developers-training',                            cat:'dev', brand:'gh',   depth:'minimal',     price:447, title:'GitHub for Developers: Complete Training',                  desc:'Comprehensive GitHub training from first commit to enterprise workflows — covering Git fundamentals, GitHub Flow, Actions automation, and integration with popular development toolchains.',             tags:['github'] },
+{ slug:'course-mastering-rust',                                            cat:'dev', brand:'cc',   depth:'substantive', price:697, title:'Mastering Rust',                                            desc:'Advance from Rust fundamentals to expert-level systems programming — advanced lifetimes, const generics, async/await with Tokio, unsafe code, FFI, macro development, and performance optimisation.',  tags:['rust'] },
+{ slug:'course-memory-safe-programming-with-rust',                         cat:'dev', brand:'cc',   depth:'substantive', price:597, title:'Memory-Safe Programming with Rust',                         desc:'Eliminate entire categories of security vulnerabilities by replacing legacy C/C++ components with memory-safe Rust — ownership model, safe abstractions over unsafe, and audit techniques.',            tags:['rust'] },
+{ slug:'course-power-platform-developer',                                  cat:'dev', brand:'cert', depth:'minimal',     price:897, title:'Power Platform Developer (PL-400 Prep)',                    desc:'Build custom Power Platform solutions for the PL-400 certification — PCF controls, custom connectors, Azure Functions integration, Dataverse API, and ALM with Azure DevOps.',                        tags:['azure','dotnet'] },
+{ slug:'course-python-advanced',                                           cat:'dev', brand:'other',depth:'minimal',     price:497, title:'Python Advanced',                                           desc:'Deepen Python mastery with metaclasses, decorators, context managers, generators, async/await, C extensions with ctypes, performance profiling with cProfile, and writing publishable packages.',     tags:['python'] },
+{ slug:'course-rust-essentials',                                           cat:'dev', brand:'cc',   depth:'substantive', price:497, title:'Rust Essentials',                                           desc:'Start writing production Rust — ownership and borrowing, structs and enums, pattern matching, traits, generics, error handling with Result/Option, and the standard collections library.',               tags:['rust'] },
+{ slug:'course-rust-for-c-programmers',                                    cat:'dev', brand:'cc',   depth:'substantive', price:547, title:'Rust for C Programmers',                                    desc:'Translate deep C expertise into idiomatic Rust — pointer migration, manual memory equivalents, FFI for calling C from Rust, unsafe blocks, and zero-cost abstractions for systems developers.',         tags:['rust'] },
+{ slug:'course-rust-for-javascripttypescript-programmers',                 cat:'dev', brand:'cc',   depth:'substantive', price:547, title:'Rust for JavaScript / TypeScript Programmers',              desc:'Migrate from JS/TS to Rust — ownership analogies to JS, async patterns, WASM compilation targets, and building Node.js native extensions with Neon and NAPI-RS.',                                      tags:['rust'] },
+{ slug:'course-rust-for-python-programmers',                               cat:'dev', brand:'cc',   depth:'substantive', price:547, title:'Rust for Python Programmers',                               desc:'Port Python performance bottlenecks to Rust using PyO3 and maturin — Rust\'s type system, concurrency primitives, Rayon parallelism, and measured speedup benchmarking.',                              tags:['rust','python'] },
+{ slug:'course-rust-parallel-programming',                                 cat:'dev', brand:'cc',   depth:'substantive', price:597, title:'Rust Parallel Programming',                                 desc:'Write concurrent and parallel Rust programs using threads, channels, Arc/Mutex, Rayon parallel iterators, Tokio async runtime, and lock-free data structures for maximum throughput.',                 tags:['rust'] },
+{ slug:'course-rust-refresher',                                            cat:'dev', brand:'cc',   depth:'substantive', price:297, title:'Rust Refresher',                                            desc:'A fast-paced review of Rust fundamentals for developers who have used Rust before — ownership, traits, closures, iterators, and common patterns to rebuild fluency quickly.',                          tags:['rust'] },
+{ slug:'course-short-course-on-rust-for-python-programmers',               cat:'dev', brand:'cc',   depth:'substantive', price:347, title:'Short Course: Rust for Python Programmers',                 desc:'An accelerated introduction to Rust for Python developers — key ownership concepts, type system differences, PyO3 basics, and the most impactful migration patterns, compressed into a focused format.',  tags:['rust','python'] },
+{ slug:'course-spring-boot-mastery',                                       cat:'dev', brand:'other',depth:'minimal',     price:597, title:'Spring Boot Mastery',                                       desc:'Build production-ready Java microservices with Spring Boot 3 — REST APIs, Spring Security, Spring Data JPA, testing with JUnit 5 and Testcontainers, and containerised cloud deployment.',              tags:[] },
+{ slug:'course-task-automation-with-python',                               cat:'dev', brand:'cc',   depth:'substantive', price:497, title:'Task Automation with Python',                               desc:'Automate repetitive business and developer workflows with Python — file processing, web scraping with BeautifulSoup/Playwright, scheduling with APScheduler, API calls, and CLI tool packaging.',       tags:['python'] },
+{ slug:'course-test-driven-development-with-net-10-blazor-and-min',        cat:'dev', brand:'cc',   depth:'substantive', price:647, title:'TDD with .NET 10, Blazor & Minimal API',                    desc:'Apply test-driven development to .NET 10 with xUnit and bUnit — unit testing Minimal API endpoints, Blazor component testing, integration tests with WebApplicationFactory, and CI test gates.',       tags:['dotnet'] },
+{ slug:'course-test-driven-development-with-net-10-blazor-and-web',        cat:'dev', brand:'cc',   depth:'substantive', price:647, title:'TDD with .NET 10, Blazor & Web API',                        desc:'Practice TDD across the full .NET 10 stack — unit tests, integration tests, end-to-end testing with Playwright, EF Core in-memory provider, and mutation testing with Stryker.',                       tags:['dotnet'] },
+
+// ── PRODUCTIVITY & AI ──
+{ slug:'course-azure-cognitive-services-open-ai-and-prompt-engine',        cat:'prod', brand:'atm',  depth:'substantive', price:797, title:'Azure Cognitive Services, OpenAI & Prompt Engineering',   desc:'Integrate Azure Cognitive Services and Azure OpenAI into enterprise applications — vision, speech, language APIs, GPT-4 deployment, responsible AI controls, and structured prompt engineering.',      tags:['azure','ai'] },
+{ slug:'course-developing-ai-models-in-microsoft-azure',                   cat:'prod', brand:'atm',  depth:'substantive', price:797, title:'Developing AI Models in Microsoft Azure',                 desc:'Design, train, and deploy custom AI models using Azure Machine Learning — AutoML, MLflow experiment tracking, model registry, real-time and batch inference endpoints, and responsible AI.',           tags:['azure','ai','python'] },
+{ slug:'course-generative-ai-and-llms-for-python-programmers',             cat:'prod', brand:'cc',   depth:'substantive', price:697, title:'Generative AI & LLMs for Python Programmers',             desc:'Build production GenAI applications in Python — OpenAI and Anthropic APIs, LangChain chains, vector databases, RAG pipelines, function calling, and structured output patterns for enterprise.',       tags:['python','ai'] },
+{ slug:'course-generative-ai-engineering',                                 cat:'prod', brand:'atm',  depth:'substantive', price:897, title:'Generative AI Engineering',                               desc:'Architect and deploy enterprise-scale GenAI systems — model selection and trade-offs, fine-tuning, RAG at scale, evaluation frameworks, safety guardrails, and LLM cost governance.',                   tags:['ai','python'] },
+{ slug:'course-microsoft-copilot-integration-services-to-transfor',        cat:'prod', brand:'atm',  depth:'substantive', price:797, title:'Microsoft Copilot Integration Services',                  desc:'Transform business workflows by integrating Microsoft Copilot across M365, Teams, and custom applications — Copilot Studio, declarative agents, Graph connectors, and governance policies.',           tags:['azure','ai'] },
+{ slug:'course-ml-and-ai-for-software-developers',                         cat:'prod', brand:'atm',  depth:'substantive', price:747, title:'ML & AI for Software Developers',                         desc:'Bridge software engineering and machine learning — model lifecycle, feature engineering, MLOps with Azure ML, model serving patterns, monitoring for drift, and integration into existing applications.',tags:['ai','python','azure'] },
+{ slug:'course-openai-fundamentals',                                       cat:'prod', brand:'atm',  depth:'substantive', price:597, title:'OpenAI Fundamentals',                                     desc:'Get hands-on with the OpenAI API — GPT-4o, structured outputs, function/tool calling, embeddings and semantic search, batch API, fine-tuning workflows, and building AI-powered product features.',    tags:['ai','python'] },
+{ slug:'GenAIOpsHints',                                                    cat:'prod', brand:'other', depth:'substantive', price:297, title:'GenAI Ops Hints & Patterns',                              desc:'Practical operational patterns and production-readiness checklists for GenAI deployments — prompt versioning, evaluation pipelines, cost controls, latency budgets, and incident response playbooks.',  tags:['ai'] },
+
+// ── SALES ENABLEMENT ──
+{ slug:'course-ai-powered-sales-with-microsoft-copilot',                   cat:'sales', brand:'atm',  depth:'substantive', price:697, title:'AI-Powered Sales with Microsoft Copilot',               desc:'Leverage Microsoft Copilot to supercharge the full sales lifecycle — AI-assisted prospecting, proposal generation, deal coaching, objection handling preparation, and pipeline reporting.',             tags:['ai','azure'] },
+{ slug:'course-consultative-selling-for-technology-solutions',             cat:'sales', brand:'cc',   depth:'substantive', price:597, title:'Consultative Selling for Technology Solutions',           desc:'Develop consultative sales skills to identify customer pain points, co-create business cases, navigate technical buyers, and close complex multi-stakeholder technology deals.',                       tags:[] },
+{ slug:'course-executive-sales-presentations-and-storytelling',           cat:'sales', brand:'cc',   depth:'substantive', price:697, title:'Executive Sales Presentations & Storytelling',           desc:'Craft and deliver compelling executive-level sales presentations using narrative frameworks, data visualisation storytelling, and boardroom communication techniques that drive decisions.',             tags:[] },
+{ slug:'course-sales-enablement-for-cloud-and-managed-services',          cat:'sales', brand:'cc',   depth:'substantive', price:647, title:'Sales Enablement for Cloud & Managed Services',          desc:'Build the product knowledge, competitive positioning, and objection-handling skills to confidently sell cloud and managed services — covering IaaS, PaaS, SaaS, and MSP business models.',             tags:['azure'] },
+{ slug:'course-sales-enablement-fundamentals',                            cat:'sales', brand:'cc',   depth:'substantive', price:497, title:'Sales Enablement Fundamentals',                          desc:'Master the core principles of modern sales enablement — content strategy aligned to buyer journey, CRM hygiene, deal stage qualification, sales coaching frameworks, and rep onboarding best practices.',tags:[] },
+
+// ── SECURITY READINESS ──
+{ slug:'course-cybersec-cfr-410',                cat:'sec', brand:'cert', depth:'minimal',     price:897,  title:'CyberSec First Responder (CFR-410 Prep)',         desc:'Prepare for the CFR-410 CyberSec First Responder certification — threat detection and triage, incident response procedures, vulnerability management, and enterprise security control frameworks.',     tags:[] },
+{ slug:'course-cybersecurity-bootcamp',          cat:'sec', brand:'boot', depth:'minimal',     price:1197, title:'Cybersecurity Bootcamp',                          desc:'Intensive cybersecurity bootcamp covering ethical hacking, network defence strategies, identity and access management, compliance frameworks (NIST, ISO 27001), and security operations fundamentals.',  tags:[] },
+{ slug:'course-github-advanced-security-training', cat:'sec', brand:'atm', depth:'substantive', price:697, title:'GitHub Advanced Security Training',               desc:'Configure and leverage GitHub Advanced Security across your organisation — code scanning with CodeQL, secret detection policies, dependency review, security advisory management, and GHAS rollout.',   tags:['github'] },
+
+// ── SKILLS GAP ANALYSIS ──
+{ slug:'course-building-enterprise-skills-matrices-and-learning-paths', cat:'skills', brand:'cc',  depth:'substantive', price:697, title:'Building Enterprise Skills Matrices & Learning Paths',  desc:'Design and deploy enterprise-wide skills matrices that map workforce capabilities to strategic business outcomes, drive targeted learning investment, and power succession planning programmes.',       tags:['ai'] },
+{ slug:'course-data-driven-talent-gap-reporting-for-leaders',           cat:'skills', brand:'cc',  depth:'substantive', price:647, title:'Data-Driven Talent Gap Reporting for Leaders',          desc:'Turn skills assessment data into executive-ready talent gap reports — covering data collection methodology, gap severity scoring, trend analysis, and board-level visualisation dashboards.',          tags:['python'] },
+{ slug:'course-skills-gap-analysis-foundations',                        cat:'skills', brand:'cc',  depth:'substantive', price:497, title:'Skills Gap Analysis Foundations',                       desc:'Learn the end-to-end process for identifying, measuring, and prioritising capability gaps across teams — structured analysis frameworks, interview techniques, and competency mapping tools.',          tags:[] },
+{ slug:'course-strategic-workforce-planning-and-skills-forecasting',    cat:'skills', brand:'cc',  depth:'substantive', price:797, title:'Strategic Workforce Planning & Skills Forecasting',     desc:'Align talent strategy with business objectives through scenario-based workforce planning, skills demand forecasting with AI tools, and succession readiness dashboards for senior leadership.',           tags:['ai'] },
+{ slug:'course-workforce-capability-assessment-with-ai',                cat:'skills', brand:'cc',  depth:'substantive', price:697, title:'Workforce Capability Assessment with AI',               desc:'Use AI tools to accelerate large-scale workforce capability assessments — automated skills data collection, NLP-based competency inference, gap scoring, and actionable capability reports at scale.',    tags:['ai','python'] },
+];
+
+// ── INCENTIVE CONFIG ────────────────────────────────────
+const INCENTIVES = {
+  'course-generative-ai-engineering':              '🎁 Bundle with OpenAI Fundamentals — save 20% combined',
+  'course-openai-fundamentals':                    '🎁 Bundle with Generative AI Engineering — save 20% combined',
+  'course-mastering-rust':                         '⚡ Early-bird discount available — enroll 30 days out, save 10%',
+  'course-rust-for-python-programmers':            '🔗 Refer a colleague and both save 15%',
+  'course-azure-solutions-architect':              '📦 Pair with Azure Administrator — certification bundle pricing',
+  'course-azure-administrator':                    '📦 Pair with Azure Solutions Architect — certification bundle pricing',
+  'course-data-analytics-bootcamp':                '👥 Team pricing available — 5+ seats unlocks 25% off',
+  'course-cybersecurity-bootcamp':                 '👥 Team pricing available — 5+ seats unlocks 25% off',
+  'course-devops-bootcamp':                        '👥 Team pricing available — 5+ seats unlocks 25% off',
+  'course-generative-ai-and-llms-for-python-programmers': '🔗 Refer a colleague and earn $150 credit per signup',
+  'course-prosci-inspired-change-management-practitioner': '⚡ Early-bird discount — register 30 days early, save 10%',
+  'course-strategic-workforce-planning-and-skills-forecasting': '🔗 Refer a colleague and both save 15%',
+};
+
+// ── CATEGORY META ────────────────────────────────────────
+const CAT = {
+  data:   { label: 'AI Data Analysis',       cls: 'data'   },
+  change: { label: 'Change Management',      cls: 'change' },
+  cloud:  { label: 'Cloud Migration',        cls: 'cloud'  },
+  dev:    { label: 'Developer Up-skilling',  cls: 'dev'    },
+  prod:   { label: 'Productivity & AI',      cls: 'prod'   },
+  sales:  { label: 'Sales Enablement',       cls: 'sales'  },
+  sec:    { label: 'Security Readiness',     cls: 'sec'    },
+  skills: { label: 'Skills Gap Analysis',    cls: 'skills' },
+};
+
+const BRAND = {
+  cc:    { label: 'Cloud Contraptions', cls: 'cc'   },
+  atm:   { label: 'Atmosera',           cls: 'atm'  },
+  gh:    { label: 'GitHub Training',    cls: 'gh'   },
+  cert:  { label: 'Certification Path', cls: 'cert' },
+  boot:  { label: 'Bootcamp',          cls: 'boot' },
+  other: { label: 'Other',             cls: ''     },
+};
+
+const DEPTH_LABEL = { substantive: 'Substantive', minimal: 'Minimal', blank: 'Outline only' };
+
+// Pre-compute search text
+COURSES.forEach(c => {
+  c.searchText = [c.title, c.desc, CAT[c.cat].label, BRAND[c.brand].label, ...c.tags].join(' ').toLowerCase();
+});
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+const state = { q:'', cats:new Set(), brands:new Set(), tiers:new Set(), depths:new Set(), techs:new Set(), sort:'default' };
+
+function priceTier(p) {
+  if (p < 500)  return 'under500';
+  if (p < 700)  return '500to700';
+  if (p < 1000) return '700to1000';
+  return 'over1000';
+}
+
+function matchesFilters(c) {
+  if (state.q && !c.searchText.includes(state.q.toLowerCase())) return false;
+  if (state.cats.size   && !state.cats.has(c.cat))             return false;
+  if (state.brands.size && !state.brands.has(c.brand))         return false;
+  if (state.tiers.size  && !state.tiers.has(priceTier(c.price)))return false;
+  if (state.depths.size && !state.depths.has(c.depth))         return false;
+  if (state.techs.size) {
+    const has = [...state.techs].some(t => c.tags.includes(t) || c.searchText.includes(t));
+    if (!has) return false;
+  }
+  return true;
+}
+
+function matchesWithout(c, skip) {
+  const saved = state[skip];
+  state[skip] = new Set();
+  const r = matchesFilters(c);
+  state[skip] = saved;
+  return r;
+}
+
+function sortItems(arr) {
+  const a = [...arr];
+  switch (state.sort) {
+    case 'price-asc':  return a.sort((x,y) => x.price - y.price);
+    case 'price-desc': return a.sort((x,y) => y.price - x.price);
+    case 'alpha':      return a.sort((x,y) => x.title.localeCompare(y.title));
+    case 'depth':      return a.sort((x,y) => { const o={substantive:0,minimal:1,blank:2}; return o[x.depth]-o[y.depth]; });
+    default:           return a;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function hl(text) {
+  if (!state.q) return esc(text);
+  const q = state.q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  return esc(text).replace(new RegExp(`(${q})`,'gi'),'<mark>$1</mark>');
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER CARD
+// ═══════════════════════════════════════════════════════
+function renderCard(c) {
+  const cat   = CAT[c.cat];
+  const brand = BRAND[c.brand];
+  const ghUrl = `https://github.com/derricksobrien/${c.slug}`;
+  const depthTitle = { substantive:'Full course content', minimal:'Title/outline — content expanding', blank:'Outline stub — content coming soon' }[c.depth];
+  const incentive = INCENTIVES[c.slug];
+  const incentiveHtml = incentive
+    ? `<div class="incentive"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm1 11H9v-2h2v2zm0-4H9V7h2v2z"/></svg>${esc(incentive)}</div>`
+    : '';
+
+  const listPriceHtml = c.price >= 700
+    ? `<span class="price-orig">$${Math.round(c.price * 1.15).toLocaleString()}</span>`
+    : '';
+
+  const teamNote = (c.price >= 997)
+    ? `<div class="team-note">👥 Team pricing for 5+ seats — contact us for group rates</div>`
+    : '';
+
+  return `<div class="card">
+    <div class="card-stripe ${cat.cls}"></div>
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="cat-badge ${cat.cls}">${hl(cat.label)}</span>
+        <span class="brand-badge ${brand.cls}">${esc(brand.label)}</span>
+        <span class="depth-dot ${c.depth}" title="${depthTitle}"></span>
+      </div>
+      <div class="card-title">${hl(c.title)}</div>
+      <div class="card-desc">${hl(c.desc)}</div>
+      ${incentiveHtml}
+    </div>
+    <div class="card-foot">
+      <span class="price">$${c.price.toLocaleString()}${listPriceHtml}</span>
+      <a class="btn-gh" href="${ghUrl}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.071 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.268 2.75 1.026A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.026 2.747-1.026.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        GitHub
+      </a>
+      <a class="btn-enroll" href="#enroll-${esc(c.slug)}">Enroll →</a>
+      ${teamNote}
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════════════════════════
+const CAT_ORDER = ['data','change','cloud','dev','prod','sales','sec','skills'];
+
+function render() {
+  const filtered = sortItems(COURSES.filter(matchesFilters));
+  const grid = document.getElementById('grid');
+  document.getElementById('rcount').textContent = filtered.length;
+  document.getElementById('hcount').textContent = filtered.length;
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty"><h3>No courses found</h3><p>Try adjusting your filters or search query.</p></div>`;
+    updateCounts(); renderChips(); return;
+  }
+
+  if (state.sort !== 'default') {
+    // flat list
+    grid.innerHTML = filtered.map(renderCard).join('');
+  } else {
+    // group by category in order
+    let html = '';
+    CAT_ORDER.forEach(key => {
+      const group = filtered.filter(c => c.cat === key);
+      if (!group.length) return;
+      html += `<div class="sec-div"><h2 style="color:var(--c-${key})">${CAT[key].label} (${group.length})</h2><hr style="border-color:var(--c-${key});opacity:.25"></div>`;
+      html += group.map(renderCard).join('');
+    });
+    grid.innerHTML = html;
+  }
+
+  updateCounts();
+  renderChips();
+}
+
+// ═══════════════════════════════════════════════════════
+// SIDEBAR COUNTS
+// ═══════════════════════════════════════════════════════
+function updateCounts() {
+  CAT_ORDER.forEach(k => {
+    const el = document.getElementById(`cnt-cat-${k}`);
+    if (el) el.textContent = COURSES.filter(c => c.cat===k && matchesWithout(c,'cats')).length;
+  });
+  ['cc','atm','gh','cert','boot','other'].forEach(k => {
+    const el = document.getElementById(`cnt-brand-${k}`);
+    if (el) el.textContent = COURSES.filter(c => c.brand===k && matchesWithout(c,'brands')).length;
+  });
+  ['under500','500to700','700to1000','over1000'].forEach(k => {
+    const el = document.getElementById(`cnt-tier-${k}`);
+    if (el) el.textContent = COURSES.filter(c => priceTier(c.price)===k && matchesWithout(c,'tiers')).length;
+  });
+  ['substantive','minimal','blank'].forEach(k => {
+    const el = document.getElementById(`cnt-depth-${k}`);
+    if (el) el.textContent = COURSES.filter(c => c.depth===k && matchesWithout(c,'depths')).length;
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// CHIPS
+// ═══════════════════════════════════════════════════════
+const CHIP_MAP = {
+  cats:   { data:'AI Data Analysis', change:'Change Mgmt', cloud:'Cloud Migration', dev:'Developer Up-skilling', prod:'Productivity & AI', sales:'Sales Enablement', sec:'Security Readiness', skills:'Skills Gap Analysis' },
+  brands: { cc:'Cloud Contraptions', atm:'Atmosera', gh:'GitHub Training', cert:'Cert Path', boot:'Bootcamp', other:'Other' },
+  tiers:  { under500:'Under $500', '500to700':'$500–$700', '700to1000':'$700–$1,000', over1000:'Over $1,000' },
+  depths: { substantive:'Substantive', minimal:'Minimal', blank:'Outline only' },
+  techs:  { rust:'Rust', python:'Python', azure:'Azure', dotnet:'.NET', github:'GitHub', sql:'PostgreSQL/SQL', ai:'AI/LLM', airflow:'Airflow' },
+};
+function renderChips() {
+  const chips = [];
+  if (state.q) chips.push(`<button class="chip" onclick="clearSearch()">✕ "${esc(state.q)}"</button>`);
+  ['cats','brands','tiers','depths','techs'].forEach(k => {
+    state[k].forEach(v => {
+      const lbl = CHIP_MAP[k]?.[v] || v;
+      chips.push(`<button class="chip" onclick="removeFilter('${k}','${v}')">✕ ${esc(lbl)}</button>`);
+    });
+  });
+  document.getElementById('chips').innerHTML = chips.join('');
+}
+function removeFilter(key, value) {
+  state[key].delete(value);
+  const attr = {cats:'cat',brands:'brand',tiers:'tier',depths:'depth',techs:'tech'}[key];
+  const cb = document.querySelector(`[data-filter="${attr}"][value="${value}"]`);
+  if (cb) cb.checked = false;
+  render();
+}
+function clearSearch() {
+  state.q = ''; document.getElementById('q').value = '';
+  document.getElementById('clearQ').style.display = 'none';
+  render();
+}
+
+// ═══════════════════════════════════════════════════════
+// EVENTS
+// ═══════════════════════════════════════════════════════
+document.getElementById('q').addEventListener('input', e => {
+  state.q = e.target.value.trim();
+  document.getElementById('clearQ').style.display = state.q ? 'block' : 'none';
+  render();
+});
+document.getElementById('clearQ').addEventListener('click', clearSearch);
+
+document.querySelectorAll('[data-filter]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const map = { cat:'cats', brand:'brands', tier:'tiers', depth:'depths', tech:'techs' };
+    const key = map[cb.dataset.filter];
+    if (!key) return;
+    if (cb.checked) state[key].add(cb.value);
+    else            state[key].delete(cb.value);
+    render();
+  });
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  state.q=''; state.cats=new Set(); state.brands=new Set();
+  state.tiers=new Set(); state.depths=new Set(); state.techs=new Set();
+  document.getElementById('q').value='';
+  document.getElementById('clearQ').style.display='none';
+  document.querySelectorAll('[data-filter]').forEach(cb => cb.checked=false);
+  render();
+});
+
+document.getElementById('sort').addEventListener('change', e => { state.sort=e.target.value; render(); });
+
+render();
+</script>
+</body>
+</html>
