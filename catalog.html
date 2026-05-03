@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexetra Course Catalog</title>
+  <style>
+    :root {
+      --c-anthropic: #7C3AED;
+      --c-nvidia: #5a9216;
+      --c-openclaw: #ea6c0a;
+      --c-shim: #475569;
+      --sidebar: 268px;
+      --radius: .75rem;
+      --shadow: 0 1px 3px rgba(0,0,0,.07), 0 4px 14px rgba(0,0,0,.06);
+      --shadow-h: 0 4px 12px rgba(0,0,0,.13), 0 8px 28px rgba(0,0,0,.09);
+      --tr: all .17s ease;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: #0c1220;
+      color: #fff;
+      padding: .9rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,.35);
+      height: 60px;
+    }
+    .logo { font-size: 1.25rem; font-weight: 800; letter-spacing: -.5px; }
+    .logo span { color: #818cf8; }
+    .logo-sub { font-size: .75rem; color: #64748b; }
+    .header-right { margin-left: auto; display: flex; align-items: center; gap: 1.5rem; }
+    .header-count { font-size: .82rem; color: #94a3b8; }
+    .header-count strong { color: #e2e8f0; font-size: .95rem; }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: flex;
+      max-width: 1700px;
+      margin: 0 auto;
+    }
+
+    /* ── SIDEBAR ── */
+    aside {
+      width: var(--sidebar);
+      flex-shrink: 0;
+      background: #fff;
+      border-right: 1px solid #e2e8f0;
+      padding: 1.1rem 1rem 2rem;
+      position: sticky;
+      top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 transparent;
+    }
+    aside::-webkit-scrollbar { width: 4px; }
+    aside::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+
+    /* search */
+    .search-wrap { position: relative; margin-bottom: 1.1rem; }
+    .search-icon {
+      position: absolute; left: .65rem; top: 50%; transform: translateY(-50%);
+      width: 14px; height: 14px; color: #94a3b8; pointer-events: none;
+    }
+    #q {
+      width: 100%;
+      padding: .58rem .7rem .58rem 2.1rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: .5rem;
+      font-size: .82rem;
+      background: #f8fafc;
+      outline: none;
+      transition: var(--tr);
+      color: #1e293b;
+    }
+    #q:focus { border-color: #818cf8; background: #fff; box-shadow: 0 0 0 3px rgba(129,140,248,.15); }
+    .clear-q {
+      position: absolute; right: .4rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: #94a3b8;
+      font-size: 1rem; line-height: 1; padding: .2rem; display: none;
+    }
+    .clear-q:hover { color: #334155; }
+
+    /* filter group */
+    .fg { margin-bottom: 1.1rem; padding-bottom: 1.1rem; border-bottom: 1px solid #f1f5f9; }
+    .fg:last-of-type { border-bottom: none; margin-bottom: 0; }
+    .fg-title {
+      font-size: .64rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .09em; color: #94a3b8; margin-bottom: .6rem;
+    }
+    .fo {
+      display: flex; align-items: center; gap: .45rem;
+      padding: .22rem .3rem; border-radius: .375rem;
+      cursor: pointer; font-size: .8rem; color: #334155;
+      user-select: none; transition: background .12s;
+    }
+    .fo:hover { background: #f1f5f9; }
+    .fo input[type=checkbox] { width: 13px; height: 13px; accent-color: #4f46e5; cursor: pointer; flex-shrink: 0; }
+    .fo .cnt { margin-left: auto; font-size: .68rem; color: #94a3b8; min-width: 16px; text-align: right; }
+    .fo .dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .dot-anthropic { background: var(--c-anthropic); }
+    .dot-nvidia    { background: var(--c-nvidia); }
+    .dot-openclaw  { background: var(--c-openclaw); }
+    .dot-shim      { background: var(--c-shim); }
+
+    .reset-btn {
+      width: 100%; margin-top: .6rem;
+      padding: .48rem; background: none;
+      border: 1.5px solid #e2e8f0; border-radius: .5rem;
+      font-size: .78rem; color: #64748b; cursor: pointer;
+      transition: var(--tr);
+    }
+    .reset-btn:hover { border-color: #94a3b8; background: #f8fafc; color: #1e293b; }
+
+    /* active filter chips */
+    #chips { display: flex; flex-wrap: wrap; gap: .3rem; margin-bottom: .75rem; }
+    .chip {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font-size: .7rem; background: #ede9fe; color: #6d28d9;
+      padding: .18rem .5rem; border-radius: 999px; cursor: pointer;
+      border: none; transition: background .12s;
+    }
+    .chip:hover { background: #ddd6fe; }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1; min-width: 0;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .results-bar {
+      display: flex; align-items: center; gap: .75rem; margin-bottom: 1.1rem;
+    }
+    .results-bar .rlabel { font-size: .82rem; color: #64748b; }
+    .results-bar .rlabel strong { color: #1e293b; font-size: .95rem; }
+    .sort-wrap { margin-left: auto; display: flex; align-items: center; gap: .4rem; }
+    .sort-wrap label { font-size: .75rem; color: #64748b; }
+    #sort {
+      font-size: .78rem; border: 1.5px solid #e2e8f0; border-radius: .4rem;
+      padding: .3rem .55rem; background: #fff; color: #334155;
+      outline: none; cursor: pointer;
+    }
+
+    /* ── GRID ── */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.1rem; }
+
+    /* section divider */
+    .sec-div {
+      grid-column: 1/-1; display: flex; align-items: center; gap: .75rem;
+      padding: .5rem 0 .35rem; margin-top: .4rem;
+    }
+    .sec-div h2 { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: #94a3b8; white-space: nowrap; }
+    .sec-div hr { flex: 1; border: none; border-top: 1.5px solid #e2e8f0; }
+
+    /* ── CARD ── */
+    .card {
+      background: #fff; border-radius: var(--radius);
+      box-shadow: var(--shadow); border: 1px solid #e9eef4;
+      display: flex; flex-direction: column;
+      transition: box-shadow .2s, transform .2s;
+      overflow: hidden;
+    }
+    .card:hover { box-shadow: var(--shadow-h); transform: translateY(-2px); }
+
+    .card-stripe { height: 4px; flex-shrink: 0; }
+    .card-stripe.anthropic { background: var(--c-anthropic); }
+    .card-stripe.nvidia    { background: var(--c-nvidia); }
+    .card-stripe.openclaw  { background: var(--c-openclaw); }
+    .card-stripe.shim      { background: var(--c-shim); }
+
+    .card-body { padding: 1rem 1.15rem; flex: 1; }
+
+    .card-meta { display: flex; align-items: center; gap: .45rem; margin-bottom: .55rem; flex-wrap: wrap; }
+    .tbadge {
+      font-size: .62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .06em; padding: .18rem .5rem; border-radius: 999px; flex-shrink: 0;
+    }
+    .tbadge.anthropic { background: #ede9fe; color: #5b21b6; }
+    .tbadge.nvidia    { background: #ecfccb; color: #365314; }
+    .tbadge.openclaw  { background: #fff7ed; color: #9a3412; }
+    .tbadge.shim      { background: #f1f5f9; color: #334155; }
+
+    .hw-pill {
+      display: inline-flex; align-items: center; gap: .25rem;
+      font-size: .64rem; color: #64748b; background: #f8fafc;
+      border: 1px solid #e2e8f0; padding: .14rem .45rem; border-radius: 999px;
+    }
+    .mc-badge {
+      margin-left: auto; font-size: .66rem; color: #94a3b8;
+      background: #f8fafc; border: 1px solid #e2e8f0; padding: .13rem .45rem; border-radius: 999px;
+    }
+
+    .card-title { font-size: .94rem; font-weight: 700; color: #0f172a; line-height: 1.3; margin-bottom: .45rem; }
+    .card-desc  { font-size: .78rem; color: #64748b; line-height: 1.55; margin-bottom: .85rem; }
+
+    /* modules toggle */
+    .mod-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; background: none; border: 1.5px solid #e2e8f0; border-radius: .45rem;
+      padding: .38rem .7rem; font-size: .75rem; color: #4f46e5; cursor: pointer;
+      transition: var(--tr);
+    }
+    .mod-toggle:hover { border-color: #818cf8; background: #f5f3ff; }
+    .mod-toggle svg { width: 13px; height: 13px; transition: transform .2s; flex-shrink: 0; }
+    .mod-toggle.open svg { transform: rotate(180deg); }
+
+    .mod-panel {
+      overflow: hidden; max-height: 0; transition: max-height .28s ease;
+    }
+    .mod-panel.open { max-height: 700px; }
+    .mod-panel-inner { padding: .6rem 0 .1rem; }
+
+    .mod-item { padding: .45rem 0; border-bottom: 1px solid #f1f5f9; }
+    .mod-item:last-child { border-bottom: none; }
+    .mod-name {
+      font-size: .78rem; font-weight: 600; color: #334155;
+      display: flex; align-items: flex-start; gap: .4rem; margin-bottom: .28rem;
+    }
+    .mod-n { font-size: .67rem; color: #94a3b8; font-weight: 400; flex-shrink: 0; margin-top: 2px; }
+    .obj-list { list-style: none; padding-left: 1.3rem; }
+    .obj-list li {
+      font-size: .72rem; color: #64748b; line-height: 1.5; padding: .07rem 0;
+      position: relative;
+    }
+    .obj-list li::before { content: '›'; position: absolute; left: -.85rem; color: #94a3b8; }
+
+    /* shim topics */
+    .topic-head { font-size: .78rem; font-weight: 600; color: #334155; margin: .5rem 0 .35rem; }
+    .res-item {
+      padding: .35rem 0 .35rem .85rem;
+      border-left: 2px solid #e2e8f0; margin-bottom: .3rem;
+    }
+    .res-link { font-size: .75rem; font-weight: 500; color: #4f46e5; text-decoration: none; }
+    .res-link:hover { text-decoration: underline; }
+    .res-sum { font-size: .7rem; color: #64748b; line-height: 1.45; margin: .12rem 0; }
+    .res-hrs { font-size: .66rem; color: #94a3b8; }
+
+    /* card footer */
+    .card-foot {
+      padding: .8rem 1.15rem; border-top: 1px solid #f1f5f9;
+      display: flex; align-items: center; gap: .65rem; background: #fafbfc;
+      flex-wrap: wrap;
+    }
+    .price { font-size: 1rem; font-weight: 700; color: #0f172a; }
+    .dates { font-size: .68rem; color: #64748b; flex: 1; line-height: 1.55; min-width: 80px; }
+    .dates-label { display: block; font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; margin-bottom: .1rem; }
+    .btn-enroll {
+      background: #4f46e5; color: #fff; border: none;
+      padding: .45rem .95rem; border-radius: .45rem; font-size: .76rem; font-weight: 600;
+      cursor: pointer; text-decoration: none; white-space: nowrap;
+      transition: background .14s;
+    }
+    .btn-enroll:hover { background: #4338ca; }
+    .btn-gh {
+      font-size: .76rem; color: #64748b; text-decoration: none;
+      display: inline-flex; align-items: center; gap: .25rem;
+      white-space: nowrap; transition: color .14s;
+    }
+    .btn-gh:hover { color: #1e293b; }
+    .btn-gh svg { width: 14px; height: 14px; }
+
+    mark { background: #fef08a; border-radius: 2px; padding: 0 1px; color: inherit; }
+
+    /* empty */
+    .empty { grid-column: 1/-1; text-align: center; padding: 4rem 2rem; color: #64748b; }
+    .empty h3 { font-size: 1.1rem; color: #334155; margin-bottom: .5rem; }
+
+    @media (max-width: 820px) {
+      aside { display: none; }
+      main { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">Nexe<span>tra</span></div>
+    <div class="logo-sub">Course Catalog</div>
+  </div>
+  <div class="header-right">
+    <div class="header-count" id="hcount"><strong>—</strong> courses &amp; packs</div>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- ── SIDEBAR ── -->
+  <aside id="sidebar">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="8.5" cy="8.5" r="5.5"/><path d="M15 15l-3-3"/>
+      </svg>
+      <input id="q" type="search" placeholder="Search courses, topics, skills…" autocomplete="off">
+      <button class="clear-q" id="clearQ" title="Clear">✕</button>
+    </div>
+
+    <div id="chips"></div>
+
+    <div class="fg">
+      <div class="fg-title">Track</div>
+      <label class="fo"><input type="checkbox" data-filter="track" value="anthropic"> <span class="dot dot-anthropic"></span> Anthropic Enterprise <span class="cnt" id="cnt-track-anthropic">6</span></label>
+      <label class="fo"><input type="checkbox" data-filter="track" value="nvidia"> <span class="dot dot-nvidia"></span> NVIDIA HPC &amp; Dev <span class="cnt" id="cnt-track-nvidia">8</span></label>
+      <label class="fo"><input type="checkbox" data-filter="track" value="openclaw"> <span class="dot dot-openclaw"></span> OpenClaw Lab Build <span class="cnt" id="cnt-track-openclaw">5</span></label>
+    </div>
+
+    <div class="fg">
+      <div class="fg-title">Content Type</div>
+      <label class="fo"><input type="checkbox" data-filter="type" value="course"> Full Course Track <span class="cnt" id="cnt-type-course">19</span></label>
+      <label class="fo"><input type="checkbox" data-filter="type" value="shim"> Prerequisite Pack <span class="cnt" id="cnt-type-shim">3</span></label>
+    </div>
+
+    <div class="fg">
+      <div class="fg-title">Price</div>
+      <label class="fo"><input type="checkbox" data-filter="price" value="79"> $79 <span class="cnt" id="cnt-price-79">3</span></label>
+      <label class="fo"><input type="checkbox" data-filter="price" value="997"> $997 <span class="cnt" id="cnt-price-997">11</span></label>
+      <label class="fo"><input type="checkbox" data-filter="price" value="1197"> $1,197 <span class="cnt" id="cnt-price-1197">8</span></label>
+    </div>
+
+    <div class="fg">
+      <div class="fg-title">Hardware</div>
+      <label class="fo"><input type="checkbox" data-filter="hw" value="asus"> ASUS Ascent GX10 <span class="cnt" id="cnt-hw-asus">14</span></label>
+      <label class="fo"><input type="checkbox" data-filter="hw" value="gb10"> NVIDIA GB10 <span class="cnt" id="cnt-hw-gb10">8</span></label>
+      <label class="fo"><input type="checkbox" data-filter="hw" value="macmini"> Mac Mini / VNC <span class="cnt" id="cnt-hw-macmini">5</span></label>
+    </div>
+
+    <div class="fg">
+      <div class="fg-title">Next Delivery</div>
+      <label class="fo"><input type="checkbox" data-filter="month" value="2026-06"> June 2026 <span class="cnt" id="cnt-month-2026-06">3</span></label>
+      <label class="fo"><input type="checkbox" data-filter="month" value="2026-08"> August 2026 <span class="cnt" id="cnt-month-2026-08">3</span></label>
+      <label class="fo"><input type="checkbox" data-filter="month" value="2026-10"> October 2026 <span class="cnt" id="cnt-month-2026-10">3</span></label>
+    </div>
+
+    <div class="fg">
+      <div class="fg-title">Modules per Course</div>
+      <label class="fo"><input type="checkbox" data-filter="mods" value="4"> 4 modules <span class="cnt" id="cnt-mods-4"></span></label>
+      <label class="fo"><input type="checkbox" data-filter="mods" value="5"> 5 modules <span class="cnt" id="cnt-mods-5"></span></label>
+    </div>
+
+    <button class="reset-btn" id="resetBtn">Reset all filters</button>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main>
+    <div class="results-bar">
+      <div class="rlabel" id="rlabel">Showing <strong id="rcount">—</strong> results</div>
+      <div class="sort-wrap">
+        <label for="sort">Sort:</label>
+        <select id="sort">
+          <option value="default">Default order</option>
+          <option value="price-asc">Price: low → high</option>
+          <option value="price-desc">Price: high → low</option>
+          <option value="mods-desc">Most modules first</option>
+          <option value="alpha">A → Z</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+const TRACKS_META = {
+  anthropic: {
+    label: 'Anthropic Enterprise', kicker: 'Track 1',
+    hardware: 'ASUS Ascent GX10', hwKey: ['asus'],
+    price: 997, priceKey: '997',
+    delivery: ['2026-06-01','2026-08-03','2026-10-05'],
+    stripeUrl: '#stripe-track-anthropic'
+  },
+  nvidia: {
+    label: 'NVIDIA HPC & Developer', kicker: 'Track 2',
+    hardware: 'ASUS Ascent GX10 + NVIDIA GB10', hwKey: ['asus','gb10'],
+    price: 1197, priceKey: '1197',
+    delivery: ['2026-06-15','2026-08-17','2026-10-19'],
+    stripeUrl: '#stripe-track-nvidia'
+  },
+  openclaw: {
+    label: 'OpenClaw Lab Build', kicker: 'Track 3',
+    hardware: '6 × Mac Mini (VNC via Screens)', hwKey: ['macmini'],
+    price: 997, priceKey: '997',
+    delivery: ['2026-06-08','2026-08-10','2026-10-12'],
+    stripeUrl: '#stripe-track-openclaw'
+  }
+};
+
+const RAW_COURSES = [
+  // ── ANTHROPIC ──
+  { track:'anthropic', slug:'anthropic-01-claude-api', num:1,
+    title:'Foundations of Claude API Integration',
+    desc:'Authenticate, send messages, handle streaming, and build production-ready request patterns with the Claude API.',
+    modules:[
+      {t:'API Authentication & Rate Limits', o:['Configure API keys securely','Understand rate limit tiers','Implement retry-with-backoff patterns']},
+      {t:'Messages API and Request Structure', o:['Construct well-formed API requests','Set temperature, max_tokens, and model parameters','Use system and human roles correctly']},
+      {t:'Streaming Responses & Webhooks', o:['Implement server-sent events for streaming','Handle partial response chunks','Build real-time output pipelines']},
+      {t:'Error Handling & Production Patterns', o:['Handle 4xx and 5xx error codes','Build circuit breakers','Log and monitor API usage']}
+    ]
+  },
+  { track:'anthropic', slug:'anthropic-02-prompt-engineering', num:2,
+    title:'Prompt Engineering for Business ROI',
+    desc:'Design prompts that deliver measurable business outcomes through structured techniques and systematic evaluation.',
+    modules:[
+      {t:'System Prompts & Role Definition', o:['Write effective system prompts','Define assistant persona and constraints','Test prompt stability across inputs']},
+      {t:'Chain-of-Thought & Few-Shot Patterns', o:['Apply chain-of-thought reasoning','Construct few-shot examples','Choose between zero-shot and few-shot approaches']},
+      {t:'Output Format Control', o:['Force JSON and structured output','Parse and validate model responses','Handle edge cases in output parsing']},
+      {t:'Measuring Prompt Performance', o:['Define prompt evaluation metrics','Build prompt test suites','Track performance over model updates']}
+    ]
+  },
+  { track:'anthropic', slug:'anthropic-03-data-analysis', num:3,
+    title:'AI Data Analysis Workflows with Claude',
+    desc:'Build scalable pipelines that ingest documents, extract insights, and surface patterns using Claude as the analysis engine.',
+    modules:[
+      {t:'Data Ingestion & Document Processing', o:['Parse PDFs, CSVs, and unstructured text','Chunk documents for context windows','Build batch ingestion pipelines']},
+      {t:'Summarization at Scale', o:['Implement map-reduce summarization','Handle multi-document synthesis','Control summary length and format']},
+      {t:'Pattern Recognition & Anomaly Detection', o:['Prompt Claude for statistical reasoning','Identify trends in tabular data','Flag outliers with natural language explanations']},
+      {t:'Building Analysis Pipelines', o:['Orchestrate multi-step analysis workflows','Cache intermediate results','Schedule recurring analysis jobs']},
+      {t:'Reporting & Visualization Integration', o:['Generate executive summary narratives','Feed Claude outputs into dashboards','Automate report generation']}
+    ]
+  },
+  { track:'anthropic', slug:'anthropic-04-fine-tuning', num:4,
+    title:'Enterprise Fine-tuning & Custom Models',
+    desc:'Prepare datasets, run fine-tuning jobs, and evaluate custom Claude models for enterprise-specific tasks.',
+    modules:[
+      {t:'When to Fine-tune vs. Prompt', o:['Identify use cases requiring fine-tuning','Calculate cost-benefit of fine-tuning','Set baseline performance benchmarks']},
+      {t:'Dataset Preparation & Curation', o:['Structure training examples in JSONL format','Clean and deduplicate datasets','Balance positive and negative examples']},
+      {t:'Fine-tuning Pipeline Setup', o:['Submit fine-tuning jobs via API','Monitor training progress','Handle dataset validation errors']},
+      {t:'Evaluation & Deployment', o:['Run holdout set evaluation','A/B test fine-tuned vs. base model','Deploy fine-tuned model to production']}
+    ]
+  },
+  { track:'anthropic', slug:'anthropic-05-production-pipelines', num:5,
+    title:'Building Production AI Pipelines',
+    desc:'Architect, orchestrate, and monitor production-grade AI pipelines with state management and cost controls.',
+    modules:[
+      {t:'Pipeline Architecture Patterns', o:['Choose between linear and DAG pipelines','Design for idempotency and retries','Handle long-running async tasks']},
+      {t:'Orchestration with LangChain/LlamaIndex', o:['Build chains with LangChain','Index and query documents with LlamaIndex','Combine retrieval-augmented generation patterns']},
+      {t:'Memory, Context & State Management', o:['Implement conversation memory','Manage context window budgets','Store and retrieve session state']},
+      {t:'Monitoring & Observability', o:['Log token usage and costs','Set up alerts for error spikes','Build dashboards for pipeline health']},
+      {t:'Cost Optimization Strategies', o:['Cache repeated prompts','Select optimal models per task tier','Implement prompt compression techniques']}
+    ]
+  },
+  { track:'anthropic', slug:'anthropic-06-roi', num:6,
+    title:'Measuring AI ROI & Business Impact',
+    desc:'Quantify the business value of AI implementations with measurement frameworks, KPIs, and executive reporting.',
+    modules:[
+      {t:'Baseline Measurement Frameworks', o:['Define pre-AI performance baselines','Select comparable metrics','Document measurement methodology']},
+      {t:'KPIs for AI Implementations', o:['Identify leading and lagging indicators','Set realistic improvement targets','Build KPI tracking dashboards']},
+      {t:'A/B Testing AI Features', o:['Design controlled AI experiments','Calculate statistical significance','Interpret and act on results']},
+      {t:'Executive Reporting & Business Cases', o:['Structure ROI presentations for executives','Quantify time and cost savings','Build the case for AI budget expansion']}
+    ]
+  },
+
+  // ── NVIDIA ──
+  { track:'nvidia', slug:'nvidia-01-gb10-fundamentals', num:1,
+    title:'NVIDIA GB10 Superchip Fundamentals',
+    desc:'Understand the Blackwell architecture, NVLink topology, and developer environment for the GB10 superchip.',
+    modules:[
+      {t:'GB10 Architecture & Blackwell Cores', o:['Identify GB10 core types and their roles','Understand Blackwell generation improvements','Compare GB10 to previous-gen chips']},
+      {t:'Memory Hierarchy & NVLink', o:['Map HBM3 and LPDDR5 tiers','Configure NVLink for multi-chip workloads','Benchmark memory bandwidth']},
+      {t:'Developer Environment Setup', o:['Install CUDA toolkit for GB10','Configure Nsight development tools','Validate environment with device queries']},
+      {t:'Benchmarking Your First Workload', o:['Run standard ML benchmarks','Interpret FLOPs and memory reports','Establish performance baselines']}
+    ]
+  },
+  { track:'nvidia', slug:'nvidia-02-cuda-programming', num:2,
+    title:'CUDA Programming Essentials',
+    desc:'Write, optimize, and debug GPU kernels with CUDA for high-throughput parallel computation.',
+    modules:[
+      {t:'GPU Threading Model & Blocks', o:['Explain grids, blocks, and threads','Assign thread indices correctly','Avoid thread divergence']},
+      {t:'Memory Management', o:['Allocate and free device memory','Use shared memory for fast access','Minimize host-device data transfers']},
+      {t:'Kernel Writing & Optimization', o:['Write and launch basic kernels','Apply loop unrolling and tiling','Achieve >80% occupancy']},
+      {t:'Debugging with Nsight', o:['Profile kernels with Nsight Compute','Find memory access bottlenecks','Interpret warp efficiency metrics']},
+      {t:'CUDA Libraries', o:['Use cuBLAS for matrix operations','Apply cuDNN for deep learning layers','Integrate cuFFT for signal processing']}
+    ]
+  },
+  { track:'nvidia', slug:'nvidia-03-python-to-rust', num:3,
+    title:'Python-to-Rust Performance Migration',
+    desc:'Systematically port Python performance bottlenecks to Rust and call them from Python via PyO3.',
+    modules:[
+      {t:'Ownership, Borrowing & Lifetimes', o:['Explain the ownership model','Use references without data races','Resolve lifetime annotation errors']},
+      {t:'Unsafe Rust for Systems Work', o:['Identify when unsafe is necessary','Write safe abstractions over unsafe code','Audit unsafe blocks correctly']},
+      {t:'PyO3: Calling Rust from Python', o:['Set up a PyO3 project with maturin','Expose Rust functions to Python','Handle Python exceptions from Rust']},
+      {t:'Parallelism with Rayon', o:['Convert sequential iterators to parallel','Understand work-stealing scheduling','Benchmark Rayon vs. Python multiprocessing']},
+      {t:'Benchmarking Python vs. Rust', o:['Use criterion.rs for micro-benchmarks','Profile with perf and flamegraphs','Document and report speedup factors']}
+    ]
+  },
+  { track:'nvidia', slug:'nvidia-04-spark-workflows', num:4,
+    title:'NVIDIA Spark Developer Workflows',
+    desc:'Accelerate Spark ETL and streaming workloads with RAPIDS cuDF and GPU-native execution.',
+    modules:[
+      {t:'RAPIDS & cuDF Introduction', o:['Replace pandas with cuDF operations','Load and transform GPU DataFrames','Measure cuDF vs. pandas speedup']},
+      {t:'GPU-Accelerated Spark on YARN', o:['Configure Spark with RAPIDS plugin','Set GPU resource scheduler parameters','Monitor GPU utilization during jobs']},
+      {t:'ETL Pipelines at Scale', o:['Build multi-stage GPU ETL pipelines','Handle schema evolution in cuDF','Optimize join operations on GPU']},
+      {t:'Spark Streaming with NVIDIA GPUs', o:['Process Kafka streams with GPU acceleration','Apply windowing functions on GPU','Debug streaming lag and backpressure']}
+    ]
+  },
+  { track:'nvidia', slug:'nvidia-05-gpu-inference', num:5,
+    title:'GPU-Accelerated AI Inference',
+    desc:'Deploy low-latency model inference at scale using TensorRT, quantization, and the Triton Inference Server.',
+    modules:[
+      {t:'TensorRT Fundamentals', o:['Convert ONNX models to TensorRT engines','Apply layer fusion optimizations','Validate TensorRT vs. PyTorch output accuracy']},
+      {t:'Model Quantization', o:['Apply INT8 and FP16 quantization','Calibrate quantization with representative data','Measure accuracy-performance tradeoffs']},
+      {t:'Triton Inference Server Setup', o:['Deploy models to Triton','Configure batching policies','Test concurrent inference throughput']},
+      {t:'Throughput & Latency Benchmarking', o:['Measure P50/P95/P99 latency','Identify GPU memory bandwidth bottlenecks','Achieve sub-500ms inference targets']}
+    ]
+  },
+  { track:'nvidia', slug:'nvidia-06-distributed-computing', num:6,
+    title:'High-Performance Distributed Computing',
+    desc:'Implement multi-GPU and multi-node distributed training and inference with MPI, NCCL, and fault-tolerant patterns.',
+    modules:[
+      {t:'MPI Fundamentals & Collective Operations', o:['Run MPI jobs across nodes','Use AllReduce for gradient aggregation','Debug rank communication issues']},
+      {t:'NCCL for Multi-GPU Communication', o:['Initialize NCCL communicators','Implement AllGather and Broadcast','Profile NCCL bandwidth utilization']},
+      {t:'Distributed Training Patterns', o:['Implement data parallelism with DDP','Apply pipeline and tensor parallelism','Scale from 1 to 8 GPUs']},
+      {t:'Fault Tolerance & Checkpointing', o:['Save training checkpoints at intervals','Resume interrupted training jobs','Implement elastic training with recovery']},
+      {t:'Network Topology Optimization', o:['Configure InfiniBand vs. Ethernet','Measure all-reduce bandwidth','Tune topology-aware communication']}
+    ]
+  },
+  { track:'nvidia', slug:'nvidia-07-mlops', num:7,
+    title:'MLOps on NVIDIA Infrastructure',
+    desc:'Build reproducible, containerized ML pipelines with full experiment tracking and model registry on GPU clusters.',
+    modules:[
+      {t:'MLflow on GPU Clusters', o:['Track experiments with MLflow','Log GPU metrics as custom metrics','Compare runs across hyperparameter sweeps']},
+      {t:'Containerized Training with NVIDIA Docker', o:['Build GPU-enabled Docker images','Use NVIDIA Container Toolkit correctly','Push images to private registries']},
+      {t:'CI/CD for ML Pipelines', o:['Trigger training jobs from git push','Gate on validation metric thresholds','Automate model promotion workflows']},
+      {t:'Model Registry & Versioning', o:['Register models with semantic versions','Implement model staging workflows','Roll back to previous model versions']}
+    ]
+  },
+  { track:'nvidia', slug:'nvidia-08-benchmarking', num:8,
+    title:'Benchmarking & Latency Optimization',
+    desc:'Profile, instrument, and optimize compute workloads to hit production latency targets on NVIDIA hardware.',
+    modules:[
+      {t:'Profiling Tools', o:['Profile with Nsight Systems','Identify CPU-GPU sync bottlenecks','Read timeline views and traces']},
+      {t:'Memory Bandwidth Optimization', o:['Calculate roofline model limits','Reduce unnecessary memory copies','Apply memory access coalescing']},
+      {t:'Kernel Fusion Techniques', o:['Identify fusable kernel pairs','Implement custom fused CUDA kernels','Measure reduction in kernel launch overhead']},
+      {t:'Production Latency Targets', o:['Define SLA budgets per inference stage','Implement adaptive batching','Validate sub-500ms end-to-end latency']}
+    ]
+  },
+
+  // ── OPENCLAW ──
+  { track:'openclaw', slug:'openclaw-01-cluster-arch', num:1,
+    title:'Mac Mini Cluster Architecture',
+    desc:'Design the network topology, storage layout, and redundancy strategy for a production Mac Mini cluster.',
+    modules:[
+      {t:'Network Topology for Mac Mini Clusters', o:['Design a flat LAN vs. VLAN topology','Configure static IPs for all nodes','Document network diagram and addressing scheme']},
+      {t:'Storage Configuration & Shared Filesystems', o:['Mount NFS shares across all nodes','Configure Time Machine for node backups','Benchmark read/write speeds across nodes']},
+      {t:'Power & Heat Management at Scale', o:['Calculate total power draw for 6 nodes','Implement smart PDU monitoring','Configure thermal alerts']},
+      {t:'Redundancy & Failover Design', o:['Identify single points of failure','Implement node health checks','Document failover runbook']}
+    ]
+  },
+  { track:'openclaw', slug:'openclaw-02-vnc-setup', num:2,
+    title:'VNC & Screens Remote Lab Setup',
+    desc:'Configure Screens and VNC for multi-user, low-latency remote access to all 6 Mac Mini nodes.',
+    modules:[
+      {t:'Screens 5 Configuration & Profiles', o:['Create connection profiles for all 6 nodes','Configure display resolution and color depth','Set up saved credential vaults securely']},
+      {t:'VNC Security & Authentication', o:['Enable VNC with strong passwords','Restrict VNC access by IP whitelist','Tunnel VNC over SSH for external access']},
+      {t:'Multi-User Session Management', o:['Manage concurrent VNC sessions per node','Configure macOS Fast User Switching for labs','Audit active sessions and disconnect idle users']},
+      {t:'Bandwidth Optimization for Remote Access', o:['Tune VNC compression settings','Measure latency from target regions','Configure adaptive quality for variable bandwidth']}
+    ]
+  },
+  { track:'openclaw', slug:'openclaw-03-workflow-orchestration', num:3,
+    title:'Distributed Workflow Orchestration',
+    desc:'Design and deploy task queues, workflow DAGs, and inter-node communication across the Mac Mini cluster.',
+    modules:[
+      {t:'Task Queue Architecture', o:['Deploy Redis on a dedicated node','Configure Celery workers on each Mac Mini','Monitor task queue depth and worker health']},
+      {t:'Workflow DAGs with Prefect/Airflow', o:['Model lab workflows as directed acyclic graphs','Schedule recurring jobs with cron triggers','Handle task failure and retry logic']},
+      {t:'Inter-Node Communication Patterns', o:['Implement pub/sub with Redis channels','Use gRPC for low-latency RPC between nodes','Design event-driven task handoffs']},
+      {t:'Load Balancing Across Mac Minis', o:['Configure NGINX as a reverse proxy','Implement round-robin and least-connections strategies','Monitor per-node CPU and memory load']},
+      {t:'Monitoring & Alerting with Prometheus', o:['Deploy Prometheus and Grafana on the cluster','Define alert rules for node failures','Build a cluster health dashboard']}
+    ]
+  },
+  { track:'openclaw', slug:'openclaw-04-lab-automation', num:4,
+    title:'Lab Automation & CI/CD Pipelines',
+    desc:'Automate cluster configuration, deployments, and testing with Ansible and GitHub Actions.',
+    modules:[
+      {t:'Ansible Playbooks for Mac Clusters', o:['Write playbooks for cluster bootstrap','Use Ansible Vault for secrets','Run ad-hoc commands across all nodes']},
+      {t:'GitHub Actions for Lab Deployments', o:['Trigger deployments on git push','Self-host GitHub Actions runners on Mac Minis','Implement manual approval gates for production']},
+      {t:'Automated Testing Environments', o:['Spin up isolated test environments per PR','Run integration tests against live lab nodes','Tear down environments on test completion']},
+      {t:'Rolling Updates with Zero Downtime', o:['Implement blue-green deployments on the cluster','Roll back deployments with a single command','Validate health checks before traffic cutover']}
+    ]
+  },
+  { track:'openclaw', slug:'openclaw-05-scaling', num:5,
+    title:'Scaling from 6 to 60 Nodes',
+    desc:'Design the infrastructure, cost model, and runbook for scaling the Mac Mini lab by 10×.',
+    modules:[
+      {t:'Infrastructure as Code with Terraform', o:['Define lab infrastructure in Terraform HCL','Apply and destroy environments reproducibly','Manage state files safely in remote backends']},
+      {t:'Service Discovery & DNS for Lab Nodes', o:['Deploy Consul for service discovery','Configure DNS-based load balancing','Implement health-check-driven routing']},
+      {t:'Cost Analysis: Mac Mini vs. Cloud', o:['Calculate 3-year TCO for 60 Mac Minis','Compare against equivalent AWS/GCP instances','Model break-even point for lab vs. cloud']},
+      {t:'Migration Runbook for Node Additions', o:['Document the zero-downtime node addition process','Automate new node provisioning with Ansible','Validate new node integration with smoke tests']}
+    ]
+  }
+];
+
+const RAW_SHIMS = [
+  { id:'shim-anthropic', track:'anthropic', slug:'shim-anthropic',
+    title:'Anthropic Track Prerequisites', subtitle:'Prerequisite Pack A',
+    desc:'Build the Python, API, and LLM foundational knowledge required for the Anthropic Enterprise Implementation track.',
+    price: 79, priceKey:'79', stripeUrl:'#stripe-shim-anthropic',
+    topics:[
+      { t:'Python Basics for AI', resources:[
+        {title:'freeCodeCamp – Python for Beginners (Full Course)', url:'https://www.youtube.com/watch?v=eWRFZyfBgOA', sum:'Comprehensive beginner Python course covering variables, loops, functions, and file I/O.', hrs:5},
+        {title:'Python Official Tutorial', url:'https://docs.python.org/3/tutorial/', sum:'The canonical language reference from python.org, covering core syntax, data structures, and standard library modules.', hrs:4},
+        {title:'Khan Academy – Intro to Computer Science (Python)', url:'https://www.khanacademy.org/computing/intro-to-computer-science', sum:'Interactive Python exercises ideal for beginners with no prior programming experience.', hrs:6}
+      ]},
+      { t:'REST APIs & JSON Fundamentals', resources:[
+        {title:'freeCodeCamp – REST API and HTTP Tutorial', url:'https://www.freecodecamp.org/news/http-and-rest-api-tutorial/', sum:'Covers HTTP methods, status codes, headers, and how to make API calls with Python\'s requests library.', hrs:3},
+        {title:'MDN Web Docs – Working with JSON', url:'https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON', sum:'Definitive reference for JSON syntax, parsing, serialization, and common pitfalls.', hrs:1}
+      ]},
+      { t:'Understanding LLMs Conceptually', resources:[
+        {title:'fast.ai – Practical Deep Learning for Coders', url:'https://course.fast.ai', sum:'Jeremy Howard\'s renowned free course covering neural networks and transformers with hands-on Python.', hrs:10},
+        {title:'Jay Alammar – The Illustrated Transformer', url:'https://jalammar.github.io/illustrated-transformer/', sum:'Visual, intuitive explanation of the transformer architecture that powers Claude and all modern LLMs.', hrs:2},
+        {title:'Anthropic – Claude API Documentation', url:'https://docs.anthropic.com', sum:'Official Anthropic documentation covering Claude\'s capabilities, prompting guides, and API reference.', hrs:2}
+      ]},
+      { t:'Business Process & Workflow Concepts', resources:[
+        {title:'freeCodeCamp – Business Analysis Fundamentals', url:'https://www.youtube.com/watch?v=zBcYMoH1dF8', sum:'Covers process mapping, requirements gathering, and workflow documentation for AI ROI opportunities.', hrs:3}
+      ]}
+    ]
+  },
+  { id:'shim-nvidia', track:'nvidia', slug:'shim-nvidia',
+    title:'NVIDIA / HPC Track Prerequisites', subtitle:'Prerequisite Pack B',
+    desc:'Build the Python, Linux, GPU computing, and mathematics foundation required for the NVIDIA HPC & Developer Upskilling track.',
+    price: 79, priceKey:'79', stripeUrl:'#stripe-shim-nvidia',
+    topics:[
+      { t:'Intermediate Python', resources:[
+        {title:'Real Python – Free Tutorials', url:'https://realpython.com', sum:'50+ free in-depth tutorials covering OOP, decorators, async programming, and performance optimization in Python.', hrs:8},
+        {title:'DataCamp – Introduction to Python for Data Science', url:'https://www.datacamp.com/courses/intro-to-python-for-data-science', sum:'Hands-on intro to NumPy, pandas, and matplotlib — the data science stack used throughout the NVIDIA track.', hrs:4}
+      ]},
+      { t:'Linux Command Line', resources:[
+        {title:'Linux Foundation – Introduction to Linux (LFS101)', url:'https://training.linuxfoundation.org/training/introduction-to-linux/', sum:'Free official Linux Foundation course covering filesystem navigation, permissions, shell commands, and system administration.', hrs:6},
+        {title:'freeCodeCamp – The Linux Command Line Full Course', url:'https://www.youtube.com/watch?v=ZtqBQ68cfJc', sum:'5-hour hands-on Linux tutorial covering bash, pipes, scripting, process management, and networking tools.', hrs:5}
+      ]},
+      { t:'Intro to GPU Computing', resources:[
+        {title:'NVIDIA DLI – Fundamentals of Accelerated Computing with CUDA C/C++', url:'https://www.nvidia.com/en-us/training/', sum:'NVIDIA\'s official self-paced course introducing GPU architecture, CUDA kernels, and memory management.', hrs:4},
+        {title:'NVIDIA DLI – Fundamentals of Accelerated Computing with CUDA Python', url:'https://learn.nvidia.com/courses/', sum:'NVIDIA\'s Python-based GPU acceleration course using Numba — ideal if you prefer Python before learning CUDA C.', hrs:4}
+      ]},
+      { t:'Linear Algebra & Math for ML', resources:[
+        {title:'Khan Academy – Linear Algebra', url:'https://www.khanacademy.org/math/linear-algebra', sum:'Free comprehensive linear algebra course covering vectors, matrices, eigenvalues, and decomposition.', hrs:12},
+        {title:'MIT OpenCourseWare – Linear Algebra (Gilbert Strang, 18.06)', url:'https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/', sum:'Gilbert Strang\'s legendary MIT linear algebra lectures — the gold standard for engineers who need deep mathematical intuition.', hrs:12}
+      ]},
+      { t:'Introduction to Rust', resources:[
+        {title:'The Rust Programming Language (Official Book)', url:'https://doc.rust-lang.org/book/', sum:'The official free Rust book covering ownership, borrowing, traits, and error handling.', hrs:10},
+        {title:'Rust by Example (Official)', url:'https://doc.rust-lang.org/rust-by-example/', sum:'Official Rust reference with runnable examples for every language feature.', hrs:6}
+      ]}
+    ]
+  },
+  { id:'shim-openclaw', track:'openclaw', slug:'shim-openclaw',
+    title:'Lab Infrastructure Prerequisites', subtitle:'Prerequisite Pack C',
+    desc:'Build the networking, Unix terminal, SSH, and containerization knowledge required for the OpenClaw Real-World Lab Build track.',
+    price: 79, priceKey:'79', stripeUrl:'#stripe-shim-openclaw',
+    topics:[
+      { t:'Networking Fundamentals', resources:[
+        {title:'Khan Academy – Internet 101', url:'https://www.khanacademy.org/computing/computers-and-the-internet', sum:'Covers IP addressing, DNS, TCP/IP, HTTP, and how the internet works — essential for cluster networking.', hrs:3},
+        {title:'freeCodeCamp – Computer Networking Full Course', url:'https://www.youtube.com/watch?v=qiQR5rTSshw', sum:'9-hour course covering OSI model, subnetting, VLANs, routing protocols, and network troubleshooting.', hrs:9}
+      ]},
+      { t:'Unix/macOS Terminal Proficiency', resources:[
+        {title:'Apple – Terminal User Guide', url:'https://support.apple.com/guide/terminal/', sum:'Official macOS terminal guide covering shell commands, scripting, and macOS-specific admin tasks.', hrs:2},
+        {title:'freeCodeCamp – Bash Scripting Full Course', url:'https://www.youtube.com/watch?v=e7BufAVwDiM', sum:'Comprehensive bash scripting tutorial covering variables, functions, loops, and automation scripts.', hrs:5}
+      ]},
+      { t:'SSH & Remote Access', resources:[
+        {title:'DigitalOcean – How To Set Up SSH Keys on macOS', url:'https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys-on-macos', sum:'Step-by-step guide for generating SSH key pairs, configuring ~/.ssh/config, and hardening SSH access.', hrs:1},
+        {title:'Warp – SSH Tunneling Explained', url:'https://www.warp.dev/blog/ssh-tunneling', sum:'Clear explanation of SSH tunneling, port forwarding, and SOCKS proxies — used throughout the OpenClaw track.', hrs:1}
+      ]},
+      { t:'Docker & Containers Basics', resources:[
+        {title:'Docker – Getting Started Tutorial', url:'https://docs.docker.com/get-started/', sum:'Official Docker tutorial: build images, run containers, use Docker Compose for multi-container setups.', hrs:3},
+        {title:'freeCodeCamp – Docker Tutorial for Beginners', url:'https://www.youtube.com/watch?v=fqMOX6JJhGo', sum:'2-hour visual walkthrough of Docker concepts, Dockerfile authoring, networking, and volumes.', hrs:2}
+      ]}
+    ]
+  }
+];
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const state = {
+  q: '',
+  tracks: new Set(),
+  types: new Set(),
+  prices: new Set(),
+  hw: new Set(),
+  months: new Set(),
+  mods: new Set(),
+  sort: 'default'
+};
+
+// ═══════════════════════════════════════════════
+// BUILD ITEMS
+// ═══════════════════════════════════════════════
+const COURSES = RAW_COURSES.map(c => {
+  const m = TRACKS_META[c.track];
+  return {
+    id: c.slug, type: 'course', track: c.track, num: c.num,
+    title: c.title, desc: c.desc, slug: c.slug,
+    modules: c.modules,
+    hw: m.hardware, hwKey: m.hwKey,
+    price: m.price, priceKey: m.priceKey,
+    delivery: m.delivery, stripeUrl: m.stripeUrl,
+    ghUrl: `https://github.com/derricksobrien/${c.slug}`,
+    searchText: [
+      c.title, c.desc,
+      ...c.modules.map(mod => mod.t),
+      ...c.modules.flatMap(mod => mod.o),
+      TRACKS_META[c.track].label
+    ].join(' ').toLowerCase()
+  };
+});
+
+const SHIMS = RAW_SHIMS.map(s => ({
+  id: s.id, type: 'shim', track: s.track,
+  title: s.title, subtitle: s.subtitle, desc: s.desc, slug: s.slug,
+  topics: s.topics,
+  hw: null, hwKey: [],
+  price: s.price, priceKey: s.priceKey,
+  delivery: [], stripeUrl: s.stripeUrl,
+  ghUrl: `https://github.com/derricksobrien/${s.slug}`,
+  searchText: [
+    s.title, s.desc, s.subtitle,
+    ...s.topics.map(t => t.t),
+    ...s.topics.flatMap(t => t.resources.map(r => r.title + ' ' + r.sum))
+  ].join(' ').toLowerCase()
+}));
+
+const ALL = [...COURSES, ...SHIMS];
+
+// ═══════════════════════════════════════════════
+// FILTER + SORT
+// ═══════════════════════════════════════════════
+function matchesFilters(item) {
+  if (state.q) {
+    const q = state.q.toLowerCase();
+    if (!item.searchText.includes(q)) return false;
+  }
+  if (state.tracks.size && !state.tracks.has(item.track)) return false;
+  if (state.types.size && !state.types.has(item.type)) return false;
+  if (state.prices.size && !state.prices.has(item.priceKey)) return false;
+  if (state.hw.size) {
+    const match = item.hwKey.some(k => state.hw.has(k));
+    // shims have no hw key — if hw filter is on, exclude shims
+    if (!match) return false;
+  }
+  if (state.months.size && item.type === 'course') {
+    const hasMo = item.delivery.some(d => state.months.has(d.slice(0,7)));
+    if (!hasMo) return false;
+  }
+  if (state.months.size && item.type === 'shim') return false;
+  if (state.mods.size && item.type === 'course') {
+    if (!state.mods.has(String(item.modules.length))) return false;
+  }
+  if (state.mods.size && item.type === 'shim') return false;
+  return true;
+}
+
+function sortItems(items) {
+  const arr = [...items];
+  switch (state.sort) {
+    case 'price-asc':  return arr.sort((a,b) => a.price - b.price);
+    case 'price-desc': return arr.sort((a,b) => b.price - a.price);
+    case 'mods-desc':  return arr.sort((a,b) => (b.modules||[]).length - (a.modules||[]).length);
+    case 'alpha':      return arr.sort((a,b) => a.title.localeCompare(b.title));
+    default:           return arr;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// HIGHLIGHT
+// ═══════════════════════════════════════════════
+function hl(text) {
+  if (!state.q) return escHtml(text);
+  const q = state.q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return escHtml(text).replace(new RegExp(`(${q})`, 'gi'), '<mark>$1</mark>');
+}
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════
+// RENDER CARDS
+// ═══════════════════════════════════════════════
+function fmtDate(d) {
+  return new Date(d + 'T00:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+}
+
+function renderCourse(item) {
+  const modCount = item.modules.length;
+  const toggleId = 'mt-' + item.id;
+  const panelId = 'mp-' + item.id;
+
+  const modulesHtml = item.modules.map((m, i) =>
+    `<div class="mod-item">
+      <div class="mod-name"><span class="mod-n">${i+1}.</span>${hl(m.t)}</div>
+      <ul class="obj-list">${m.o.map(o => `<li>${hl(o)}</li>`).join('')}</ul>
+    </div>`
+  ).join('');
+
+  const datesHtml = item.delivery.length
+    ? `<div class="dates"><span class="dates-label">Next dates</span>${item.delivery.map(fmtDate).join(' · ')}</div>`
+    : '';
+
+  const hwHtml = item.hw
+    ? `<div class="hw-pill">⚙ ${escHtml(item.hw)}</div>`
+    : '';
+
+  return `<div class="card">
+    <div class="card-stripe ${item.track}"></div>
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="tbadge ${item.track}">${TRACKS_META[item.track].kicker}</span>
+        <span class="tbadge ${item.track}" style="font-weight:400;text-transform:none;letter-spacing:0">${hl(TRACKS_META[item.track].label)}</span>
+        <span class="mc-badge">${modCount} modules</span>
+      </div>
+      ${hwHtml}
+      <div class="card-title">${hl(item.title)}</div>
+      <div class="card-desc">${hl(item.desc)}</div>
+      <button class="mod-toggle" id="${toggleId}" onclick="togglePanel('${toggleId}','${panelId}')">
+        <span>View ${modCount} modules &amp; learning objectives</span>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 8l5 5 5-5"/></svg>
+      </button>
+      <div class="mod-panel" id="${panelId}">
+        <div class="mod-panel-inner">${modulesHtml}</div>
+      </div>
+    </div>
+    <div class="card-foot">
+      <span class="price">$${item.price.toLocaleString()}</span>
+      ${datesHtml}
+      <a class="btn-gh" href="${item.ghUrl}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.071 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.268 2.75 1.026A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.026 2.747-1.026.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        GitHub
+      </a>
+      <a class="btn-enroll" href="${item.stripeUrl}">Enroll →</a>
+    </div>
+  </div>`;
+}
+
+function renderShim(item) {
+  const toggleId = 'mt-' + item.id;
+  const panelId = 'mp-' + item.id;
+  const topicCount = item.topics.length;
+  const totalRes = item.topics.reduce((n,t) => n + t.resources.length, 0);
+  const totalHrs = item.topics.flatMap(t => t.resources).reduce((n,r) => n + r.hrs, 0);
+
+  const topicsHtml = item.topics.map(tp =>
+    `<div class="mod-item">
+      <div class="topic-head">${hl(tp.t)}</div>
+      ${tp.resources.map(r =>
+        `<div class="res-item">
+          <a class="res-link" href="${r.url}" target="_blank" rel="noopener">${hl(r.title)}</a>
+          <div class="res-sum">${hl(r.sum)}</div>
+          <div class="res-hrs">~${r.hrs}h estimated</div>
+        </div>`
+      ).join('')}
+    </div>`
+  ).join('');
+
+  return `<div class="card">
+    <div class="card-stripe shim"></div>
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="tbadge shim">Prerequisite Pack</span>
+        <span class="tbadge ${item.track}" style="font-weight:400;text-transform:none;letter-spacing:0">${hl(TRACKS_META[item.track].label)}</span>
+        <span class="mc-badge">${totalHrs}h total</span>
+      </div>
+      <div class="card-title">${hl(item.title)}</div>
+      <div class="card-desc">${hl(item.desc)}</div>
+      <button class="mod-toggle" id="${toggleId}" onclick="togglePanel('${toggleId}','${panelId}')">
+        <span>${topicCount} topics · ${totalRes} free resources</span>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 8l5 5 5-5"/></svg>
+      </button>
+      <div class="mod-panel" id="${panelId}">
+        <div class="mod-panel-inner">${topicsHtml}</div>
+      </div>
+    </div>
+    <div class="card-foot">
+      <span class="price">$${item.price}</span>
+      <span style="font-size:.75rem;color:#64748b;flex:1">Self-paced prerequisite pack</span>
+      <a class="btn-gh" href="${item.ghUrl}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.071 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.268 2.75 1.026A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.026 2.747-1.026.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        GitHub
+      </a>
+      <a class="btn-enroll" href="${item.stripeUrl}">Get Pack →</a>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// TOGGLE PANEL
+// ═══════════════════════════════════════════════
+function togglePanel(btnId, panelId) {
+  const btn = document.getElementById(btnId);
+  const panel = document.getElementById(panelId);
+  if (!btn || !panel) return;
+  const open = panel.classList.toggle('open');
+  btn.classList.toggle('open', open);
+}
+
+// ═══════════════════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════════════════
+function render() {
+  const filtered = sortItems(ALL.filter(matchesFilters));
+  const courses = filtered.filter(i => i.type === 'course');
+  const shims = filtered.filter(i => i.type === 'shim');
+
+  const grid = document.getElementById('grid');
+  let html = '';
+
+  if (!filtered.length) {
+    html = `<div class="empty"><h3>No results found</h3><p>Try adjusting your filters or search term.</p></div>`;
+  } else {
+    if (courses.length) {
+      html += `<div class="sec-div"><h2>Course Tracks (${courses.length})</h2><hr></div>`;
+      html += courses.map(renderCourse).join('');
+    }
+    if (shims.length) {
+      html += `<div class="sec-div"><h2>Prerequisite Packs (${shims.length})</h2><hr></div>`;
+      html += shims.map(renderShim).join('');
+    }
+  }
+
+  grid.innerHTML = html;
+  document.getElementById('rcount').textContent = filtered.length;
+  document.getElementById('hcount').innerHTML = `<strong>${filtered.length}</strong> courses &amp; packs`;
+
+  // update sidebar counts
+  updateCounts(filtered);
+  renderChips();
+}
+
+// ═══════════════════════════════════════════════
+// SIDEBAR COUNTS
+// ═══════════════════════════════════════════════
+function updateCounts(filtered) {
+  const count = (pred) => ALL.filter(i => matchesFilters(i) || pred(i)).length;
+
+  // track
+  ['anthropic','nvidia','openclaw'].forEach(t => {
+    const el = document.getElementById(`cnt-track-${t}`);
+    if (el) el.textContent = ALL.filter(i => { const saved=state.tracks; const tmp=new Set([t]); /* ignore track filter for this count */ return i.track===t && matchesWithout(i,'tracks'); }).length;
+  });
+
+  // type
+  ['course','shim'].forEach(t => {
+    const el = document.getElementById(`cnt-type-${t}`);
+    if (el) el.textContent = ALL.filter(i => i.type===t && matchesWithout(i,'types')).length;
+  });
+
+  // price
+  ['79','997','1197'].forEach(p => {
+    const el = document.getElementById(`cnt-price-${p}`);
+    if (el) el.textContent = ALL.filter(i => i.priceKey===p && matchesWithout(i,'prices')).length;
+  });
+
+  // hw
+  const hwMap = { asus: 'asus', gb10: 'gb10', macmini: 'macmini' };
+  Object.entries(hwMap).forEach(([k]) => {
+    const el = document.getElementById(`cnt-hw-${k}`);
+    if (el) el.textContent = ALL.filter(i => i.hwKey.includes(k) && matchesWithout(i,'hw')).length;
+  });
+
+  // months
+  ['2026-06','2026-08','2026-10'].forEach(m => {
+    const el = document.getElementById(`cnt-month-${m}`);
+    if (el) el.textContent = ALL.filter(i => i.delivery && i.delivery.some(d=>d.startsWith(m)) && matchesWithout(i,'months')).length;
+  });
+
+  // mods
+  [4,5].forEach(n => {
+    const el = document.getElementById(`cnt-mods-${n}`);
+    if (el) el.textContent = ALL.filter(i => i.type==='course' && i.modules.length===n && matchesWithout(i,'mods')).length;
+  });
+}
+
+function matchesWithout(item, skipKey) {
+  const saved = state[skipKey];
+  state[skipKey] = new Set();
+  const result = matchesFilters(item);
+  state[skipKey] = saved;
+  return result;
+}
+
+// ═══════════════════════════════════════════════
+// CHIPS
+// ═══════════════════════════════════════════════
+const CHIP_LABELS = {
+  tracks: { anthropic:'Track: Anthropic', nvidia:'Track: NVIDIA', openclaw:'Track: OpenClaw' },
+  types:  { course:'Courses', shim:'Prerequisite Packs' },
+  prices: { '79':'$79', '997':'$997', '1197':'$1,197' },
+  hw:     { asus:'ASUS Ascent GX10', gb10:'NVIDIA GB10', macmini:'Mac Mini / VNC' },
+  months: { '2026-06':'June 2026', '2026-08':'Aug 2026', '2026-10':'Oct 2026' },
+  mods:   { '4':'4 modules', '5':'5 modules' }
+};
+
+function renderChips() {
+  const box = document.getElementById('chips');
+  const chips = [];
+  const keys = ['tracks','types','prices','hw','months','mods'];
+  keys.forEach(k => {
+    state[k].forEach(v => {
+      const lbl = CHIP_LABELS[k]?.[v] || v;
+      chips.push(`<button class="chip" onclick="removeFilter('${k}','${v}')">✕ ${escHtml(lbl)}</button>`);
+    });
+  });
+  if (state.q) chips.unshift(`<button class="chip" onclick="clearSearch()">✕ "${escHtml(state.q)}"</button>`);
+  box.innerHTML = chips.join('');
+}
+
+function removeFilter(key, value) {
+  state[key].delete(value);
+  // uncheck the checkbox
+  const cb = document.querySelector(`[data-filter="${key.replace(/s$/,'')}"][value="${value}"]`) ||
+             document.querySelector(`[data-filter="${filterDataAttr(key)}"][value="${value}"]`);
+  if (cb) cb.checked = false;
+  render();
+}
+
+function filterDataAttr(stateKey) {
+  const map = { tracks:'track', types:'type', prices:'price', hw:'hw', months:'month', mods:'mods' };
+  return map[stateKey] || stateKey;
+}
+
+function clearSearch() {
+  state.q = '';
+  document.getElementById('q').value = '';
+  document.getElementById('clearQ').style.display = 'none';
+  render();
+}
+
+// ═══════════════════════════════════════════════
+// EVENTS
+// ═══════════════════════════════════════════════
+document.getElementById('q').addEventListener('input', e => {
+  state.q = e.target.value.trim();
+  document.getElementById('clearQ').style.display = state.q ? 'block' : 'none';
+  render();
+});
+
+document.getElementById('clearQ').addEventListener('click', clearSearch);
+
+document.querySelectorAll('[data-filter]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const key = cb.dataset.filter;
+    const stateKey = { track:'tracks', type:'types', price:'prices', hw:'hw', month:'months', mods:'mods' }[key];
+    if (!stateKey) return;
+    if (cb.checked) state[stateKey].add(cb.value);
+    else state[stateKey].delete(cb.value);
+    render();
+  });
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  state.q = ''; state.tracks = new Set(); state.types = new Set();
+  state.prices = new Set(); state.hw = new Set();
+  state.months = new Set(); state.mods = new Set();
+  document.getElementById('q').value = '';
+  document.getElementById('clearQ').style.display = 'none';
+  document.querySelectorAll('[data-filter]').forEach(cb => cb.checked = false);
+  render();
+});
+
+document.getElementById('sort').addEventListener('change', e => {
+  state.sort = e.target.value;
+  render();
+});
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+render();
+</script>
+</body>
+</html>
