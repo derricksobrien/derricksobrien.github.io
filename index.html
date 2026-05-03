@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexetra Catalog Hub</title>
+  <style>
+    :root {
+      --bg-1: #0b1220;
+      --bg-2: #13233f;
+      --panel: rgba(255, 255, 255, 0.92);
+      --ink: #0f172a;
+      --muted: #475569;
+      --accent: #0ea5e9;
+      --accent-2: #f97316;
+      --line: #e2e8f0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Segoe UI, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 500px at -10% -20%, #1d4ed8 0%, transparent 60%),
+        radial-gradient(1000px 600px at 110% -30%, #0ea5e9 0%, transparent 55%),
+        linear-gradient(160deg, var(--bg-1), var(--bg-2));
+      min-height: 100vh;
+    }
+    .wrap {
+      width: min(1200px, 95vw);
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+    .hero {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 16px;
+      box-shadow: 0 16px 35px rgba(2, 6, 23, .28);
+      padding: 24px;
+      backdrop-filter: blur(6px);
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.9rem;
+      letter-spacing: -.02em;
+    }
+    .sub {
+      color: var(--muted);
+      margin: 0 0 16px;
+      font-size: .98rem;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .btn {
+      text-decoration: none;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: .92rem;
+      color: var(--ink);
+      background: #fff;
+    }
+    .btn.primary {
+      background: linear-gradient(120deg, var(--accent), #2563eb);
+      color: #fff;
+      border-color: transparent;
+    }
+    .btn.alt {
+      background: linear-gradient(120deg, #fb923c, var(--accent-2));
+      color: #fff;
+      border-color: transparent;
+    }
+    .grid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .card h2 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+    .preview {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    iframe {
+      width: 100%;
+      height: 620px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+    @media (max-width: 980px) {
+      .grid, .preview { grid-template-columns: 1fr; }
+      iframe { height: 500px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Nexetra Catalog Hub</h1>
+      <p class="sub">Public portal for both catalogs: the original Mac Mini lab catalog and the 72-course enterprise Nexetra catalog.</p>
+      <div class="actions">
+        <a class="btn primary" href="catalog.html">Open Mac Mini Catalog</a>
+        <a class="btn alt" href="nexetra-catalog.html">Open Nexetra Catalog</a>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <h2>Mac Mini Catalog</h2>
+          <p>Interactive store-style experience with slicers, filters, and module-level detail for the Mac Mini lab course set.</p>
+        </article>
+        <article class="card">
+          <h2>Nexetra Catalog</h2>
+          <p>72-course enterprise view with category, provider, depth, technology, and pricing filters plus bundled incentives.</p>
+        </article>
+      </div>
+      <div class="preview">
+        <iframe src="catalog.html" title="Mac Mini Catalog Preview"></iframe>
+        <iframe src="nexetra-catalog.html" title="Nexetra Catalog Preview"></iframe>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
