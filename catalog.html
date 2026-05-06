@@ -46,6 +46,24 @@
     .header-count { font-size: .82rem; color: #94a3b8; }
     .header-count strong { color: #e2e8f0; font-size: .95rem; }
 
+    .promo-banner {
+      background: linear-gradient(90deg, #1f2a44 0%, #123256 100%);
+      color: #e0ecff;
+      font-size: .8rem;
+      padding: .5rem 1.1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      display: flex;
+      flex-wrap: wrap;
+      gap: .65rem;
+      align-items: center;
+    }
+    .promo-banner a {
+      color: #7ef0c4;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .promo-banner .sep { color: #7b91b1; }
+
     /* ── LAYOUT ── */
     .layout {
       display: flex;
@@ -298,6 +316,21 @@
     <div class="header-count" id="hcount"><strong>—</strong> courses &amp; packs</div>
   </div>
 </header>
+
+<div style="background:linear-gradient(90deg,#312e81,#1e3a5f);color:#e0e7ff;font-size:0.85rem;padding:10px 20px;text-align:center;">
+  New: <strong><a href="free-lab-tour/" style="color:#7ef0c4;">Book a free 45-minute lab tour</a></strong> — explore the environments before enrolling &rarr;
+</div>
+
+<div class="promo-banner">
+  <span><a href="index.html">Back to Hub</a></span>
+  <span class="sep">|</span>
+  <span>Not ready to enroll? Try a free 45-min tour:</span>
+  <a href="free-lab-tour/?lab=anthropic">Claude API</a>
+  <span class="sep">·</span>
+  <a href="free-lab-tour/?lab=nvidia">NVIDIA Inference</a>
+  <span class="sep">·</span>
+  <a href="free-lab-tour/?lab=openclaw">OpenClaw Cluster</a>
+</div>
 
 <div class="layout">
   <!-- ── SIDEBAR ── -->
