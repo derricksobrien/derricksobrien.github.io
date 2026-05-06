@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexetra Free Lab Tour — Registration Walkthrough</title>
+  <style>
+    :root {
+      --bg: #0a1018;
+      --surface: #0f1923;
+      --surface2: #131f2e;
+      --border: #1e3048;
+      --accent: #7ef0c4;
+      --accent2: #55d7ff;
+      --text: #d1e8f5;
+      --muted: #6b8ca8;
+      --step-num: #55d7ff;
+      --radius: 10px;
+      --input-bg: #0c1520;
+      --input-border: #1e3048;
+      --badge-ok: #0d3b28;
+      --badge-ok-text: #7ef0c4;
+      --badge-err: #3b1a0d;
+      --badge-err-text: #ff9055;
+      --json-bg: #080e14;
+      --label-color: #8ab0c8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      background: #0c1220;
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-nav .logo { font-size: 1.1rem; font-weight: 800; letter-spacing: -.4px; color: #fff; text-decoration: none; }
+    .site-nav .logo span { color: #818cf8; }
+    .site-nav a { color: var(--muted); font-size: 0.82rem; text-decoration: none; }
+    .site-nav a:hover { color: var(--accent); }
+    .site-nav .breadcrumb { color: var(--muted); font-size: 0.82rem; }
+    .site-nav .breadcrumb span { color: var(--text); }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: linear-gradient(160deg, #0d1e33 0%, #0a1018 60%);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+    .page-header .eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    .page-header h1 { font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 0.75rem; }
+    .page-header p { color: var(--muted); font-size: 0.95rem; max-width: 560px; margin: 0 auto 1.25rem; }
+    .tag-row { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+    .tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 3px 12px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* ── LAYOUT ── */
+    .wrapper { max-width: 960px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+    /* ── SECTION INTRO ── */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 2rem;
+      margin-bottom: 3rem;
+    }
+    .toc h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 1rem; }
+    .toc ol { padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; }
+    .toc li a { color: var(--accent2); font-size: 0.9rem; text-decoration: none; }
+    .toc li a:hover { text-decoration: underline; }
+
+    /* ── STEP ── */
+    .step {
+      margin-bottom: 4rem;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .step-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a3a5c, #0d2640);
+      border: 2px solid var(--step-num);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--step-num);
+      flex-shrink: 0;
+    }
+    .step-header h2 { font-size: 1.25rem; font-weight: 700; color: #fff; }
+    .step-header p { font-size: 0.85rem; color: var(--muted); margin-top: 0.2rem; }
+    .step-desc {
+      font-size: 0.92rem;
+      color: #a0bccf;
+      margin-bottom: 1.25rem;
+      max-width: 700px;
+    }
+
+    /* ── SCREENSHOT FRAME ── */
+    .screenshot {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,.4);
+      margin-bottom: 1rem;
+    }
+    .screenshot-bar {
+      background: #0c1520;
+      border-bottom: 1px solid var(--border);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .screenshot-bar .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+    .screenshot-bar .url-bar {
+      flex: 1;
+      background: #0a1018;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 3px 10px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: monospace;
+    }
+    .screenshot-body {
+      background: var(--surface);
+      padding: 1.5rem;
+    }
+
+    /* ── SIMULATED UI ELEMENTS ── */
+    .sim-section-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+    .sim-h2 { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 1.25rem; }
+    .sim-form { display: flex; flex-direction: column; gap: 0.9rem; }
+    .sim-label { font-size: 0.78rem; color: var(--label-color); display: flex; flex-direction: column; gap: 4px; }
+    .sim-input {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      color: var(--text);
+      font-family: inherit;
+    }
+    .sim-input.filled { border-color: #2a4a70; color: #e2f4ff; }
+    .sim-input.highlight { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(126,240,196,0.12); }
+    .sim-textarea {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      color: var(--text);
+      font-family: inherit;
+      resize: none;
+      height: 80px;
+    }
+    .sim-textarea.filled { border-color: #2a4a70; color: #e2f4ff; }
+    .sim-btn {
+      background: linear-gradient(120deg, #7ef0c4, #55d7ff);
+      color: #0a1a1f;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      cursor: default;
+      display: inline-block;
+    }
+    .sim-btn-secondary {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.85rem;
+      border-radius: 6px;
+      padding: 10px 20px;
+      cursor: default;
+      display: inline-block;
+      text-decoration: none;
+    }
+    .sim-status {
+      font-size: 0.82rem;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+    .sim-status.success {
+      background: var(--badge-ok);
+      color: var(--badge-ok-text);
+      border: 1px solid #145a38;
+    }
+    .sim-status.error {
+      background: var(--badge-err);
+      color: var(--badge-err-text);
+      border: 1px solid #5a2e14;
+    }
+    .sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .sim-panel {
+      background: #0c1a25;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+    }
+    .sim-panel h3 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.6rem; }
+    .sim-panel ul { padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.35rem; }
+    .sim-panel li { font-size: 0.82rem; color: #93b5cc; }
+    .sim-panel .btn-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .sim-expire { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.6rem; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 640px) { .two-col, .sim-grid { grid-template-columns: 1fr; } }
+
+    /* ── CALLOUT / ANNOTATION ── */
+    .callout {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      background: #0d2236;
+      border: 1px solid #1a3d5c;
+      border-left: 3px solid var(--accent2);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin-top: 0.75rem;
+      font-size: 0.83rem;
+      color: #a0c8e0;
+    }
+    .callout .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .callout strong { color: #d0eeff; }
+
+    /* ── API BLOCK ── */
+    .api-block { margin-top: 1.25rem; }
+    .api-block-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.4rem;
+    }
+    .method-badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: .05em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    .method-post { background: #1a3a0a; color: #7ef060; border: 1px solid #2a5a14; }
+    .method-get  { background: #0a2a3a; color: #55d7ff; border: 1px solid #14455a; }
+    .api-url { font-family: monospace; font-size: 0.82rem; color: var(--muted); }
+    pre.json {
+      background: var(--json-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      font-size: 0.8rem;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      color: #b8d8f0;
+      overflow-x: auto;
+      line-height: 1.65;
+    }
+    .json-key { color: #7ef0c4; }
+    .json-str { color: #ffd090; }
+    .json-num { color: #c084fc; }
+    .json-bool { color: #f87171; }
+    .json-comment { color: #4a6a7a; font-style: italic; }
+
+    /* ── FLOW DIVIDER ── */
+    .flow-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      margin: 1.5rem 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+    .flow-arrow::before {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 28px;
+      background: linear-gradient(to bottom, transparent, var(--border));
+    }
+    .flow-arrow .arrow-label {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 3px 14px;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .flow-arrow::after {
+      content: '↓';
+      font-size: 1rem;
+      color: var(--border);
+      margin-top: 2px;
+    }
+
+    /* ── DATA TABLE ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      margin-top: 0.75rem;
+    }
+    .data-table th {
+      text-align: left;
+      padding: 7px 12px;
+      background: var(--surface2);
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    .data-table td:first-child { color: var(--muted); white-space: nowrap; }
+    .data-table td code {
+      background: var(--json-bg);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: #ffd090;
+      font-family: monospace;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+
+    /* ── SUCCESS HEADER BANNER ── */
+    .success-banner {
+      background: linear-gradient(90deg, #0a2d1e, #0d2636);
+      border: 1px solid #1a5a3a;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .success-banner .check { font-size: 1.4rem; }
+    .success-banner .title { font-weight: 700; color: var(--accent); font-size: 0.95rem; }
+    .success-banner .sub { font-size: 0.8rem; color: var(--muted); }
+
+    /* ── FOOTER ── */
+    .page-footer {
+      border-top: 1px solid var(--border);
+      margin-top: 4rem;
+      padding-top: 2rem;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .page-footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="logo" href="../index.html">Nexe<span>tra</span></a>
+  <a href="../free-lab-tour/">Free Lab Tour</a>
+  <a href="../catalog.html">Catalog</a>
+  <span class="breadcrumb">/ <span>Registration Walkthrough</span></span>
+</nav>
+
+<div class="page-header">
+  <p class="eyebrow">Documentation</p>
+  <h1>End-to-End Registration Walkthrough</h1>
+  <p>Step-by-step guide showing how a student books a free lab tour slot and unlocks their lab instructions. Includes example data, API payloads, and response structures.</p>
+  <div class="tag-row">
+    <span class="tag">Free Lab Tour</span>
+    <span class="tag">Flask backend</span>
+    <span class="tag">Token access</span>
+    <span class="tag">3 labs covered</span>
+  </div>
+</div>
+
+<div class="wrapper">
+
+  <div class="toc">
+    <h2>Steps in this walkthrough</h2>
+    <ol>
+      <li><a href="#step-1">Enter backend API endpoint</a></li>
+      <li><a href="#step-2">Fill in the booking form</a></li>
+      <li><a href="#step-3">Submit — API call and response</a></li>
+      <li><a href="#step-4">Booking confirmation state</a></li>
+      <li><a href="#step-5">Use the access token to load lab instructions</a></li>
+      <li><a href="#step-6">Access panel reveals lab entry points</a></li>
+      <li><a href="#step-7">What is stored in the database</a></li>
+    </ol>
+  </div>
+
+  <!-- ─────────────────────────────────────────── STEP 1 ── -->
+  <div class="step" id="step-1">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div>
+        <h2>Enter backend API endpoint</h2>
+        <p>Student lands on the free-lab-tour page. First field connects the form to the hosted backend.</p>
+      </div>
+    </div>
+
+    <p class="step-desc">
+      The booking form requires an API base URL before any data can be submitted. This field persists to
+      <code>localStorage</code> so students only need to enter it once per browser. When the page is opened
+      from a hub link like <code>free-lab-tour/?lab=anthropic</code> the lab dropdown is automatically pre-selected.
+    </p>
+
+    <div class="screenshot">
+      <div class="screenshot-bar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="url-bar">https://derricksobrien.github.io/free-lab-tour/?lab=anthropic</div>
+      </div>
+      <div class="screenshot-body">
+        <p class="sim-section-label">Reserve your slot</p>
+        <p class="sim-h2">Register and get a token for student access.</p>
+        <div class="sim-form">
+          <label class="sim-label">
+            API endpoint
+            <input class="sim-input highlight" readonly value="https://your-backend-host.example.com">
+          </label>
+          <label class="sim-label">
+            Full name
+            <input class="sim-input" readonly placeholder="Your name">
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-icon">🔗</span>
+      <div><strong>Pre-selection via query param:</strong> the URL parameter <code>?lab=anthropic</code> maps to
+      the option "Claude API in Action" and selects it automatically. Valid values: <code>anthropic</code>,
+      <code>nvidia</code>, <code>openclaw</code>.</div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-icon">💾</span>
+      <div><strong>Persistence:</strong> once entered, the API base is saved to <code>localStorage</code>
+      under key <code>nexetra_booking_api_base</code> and pre-filled on every future page load.</div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────── STEP 2 ── -->
+  <div class="step" id="step-2">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div>
+        <h2>Fill in the booking form</h2>
+        <p>Student enters name, email, lab, timezone, slot, and an optional evaluation goal.</p>
+      </div>
+    </div>
+
+    <p class="step-desc">
+      All fields except "What are you evaluating?" are required. The backend validates name, email (format),
+      lab, and slot on the server side — invalid submissions return a structured JSON error.
+    </p>
+
+    <div class="screenshot">
+      <div class="screenshot-bar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="url-bar">https://derricksobrien.github.io/free-lab-tour/?lab=anthropic</div>
+      </div>
+      <div class="screenshot-body">
+        <p class="sim-section-label">Reserve your slot</p>
+        <p class="sim-h2">Register and get a token for student access.</p>
+        <div class="two-col">
+          <div class="sim-form">
+            <label class="sim-label">API endpoint
+              <input class="sim-input filled" readonly value="https://nexetra-backend.fly.dev">
+            </label>
+            <label class="sim-label">Full name
+              <input class="sim-input filled" readonly value="Alex Chen">
+            </label>
+            <label class="sim-label">Work email
+              <input class="sim-input filled" readonly value="alex.chen@techcorp.io">
+            </label>
+            <label class="sim-label">Preferred lab
+              <input class="sim-input filled" readonly value="Claude API in Action">
+            </label>
+            <label class="sim-label">Your timezone
+              <input class="sim-input filled" readonly value="US Eastern">
+            </label>
+            <label class="sim-label">Preferred slot
+              <input class="sim-input filled" readonly value="Slot B - 13:00 UTC">
+            </label>
+            <label class="sim-label">What are you evaluating?
+              <textarea class="sim-textarea filled" readonly>Evaluating Claude API integration patterns for our internal tooling team. We want to understand prompt chaining and streaming before enrolling in the full track.</textarea>
+            </label>
+            <div class="sim-btn">Request booking</div>
+          </div>
+          <div>
+            <div class="sim-panel">
+              <h3>Recommended conversion framing</h3>
+              <ul>
+                <li>Best for engineers, technical leads, training buyers</li>
+                <li>Use it to evaluate course relevance before purchase</li>
+                <li>Follow-up routes into both catalogs</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.25rem">
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:.08em;font-weight:600;">Example data used in this walkthrough</p>
+      <table class="data-table">
+        <thead>
+          <tr><th>Field</th><th>Example value</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>name</td><td>Alex Chen</td><td>Any non-empty string</td></tr>
+          <tr><td>email</td><td>alex.chen@techcorp.io</td><td>Must contain @ and not start/end with @</td></tr>
+          <tr><td>lab</td><td>Claude API in Action</td><td>Must match dropdown option exactly</td></tr>
+          <tr><td>timezone</td><td>US Eastern</td><td>Optional — stored for scheduling context</td></tr>
+          <tr><td>slot</td><td>Slot B - 13:00 UTC</td><td>One of four rotating slots</td></tr>
+          <tr><td>goal</td><td>Evaluating Claude API integration…</td><td>Optional — stored for CRM context</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────── STEP 3 ── -->
+  <div class="step" id="step-3">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div>
+        <h2>Submit — API call and response</h2>
+        <p>Clicking "Request booking" fires a <code>POST /api/bookings</code> with JSON payload.</p>
+      </div>
+    </div>
+
+    <p class="step-desc">
+      The frontend sends a <code>fetch</code> POST with <code>credentials: "include"</code> so the
+      session cookie is established. The backend validates the payload, generates a UUID booking ID,
+      creates a 72-hour access token, and writes the record to SQLite.
+    </p>
+
+    <div class="api-block">
+      <div class="api-block-header">
+        <span class="method-badge method-post">POST</span>
+        <span class="api-url">https://nexetra-backend.fly.dev/api/bookings</span>
+      </div>
+      <pre class="json"><span class="json-comment">// Request body (application/json)</span>
+{
+  <span class="json-key">"name"</span>:       <span class="json-str">"Alex Chen"</span>,
+  <span class="json-key">"email"</span>:      <span class="json-str">"alex.chen@techcorp.io"</span>,
+  <span class="json-key">"lab"</span>:        <span class="json-str">"Claude API in Action"</span>,
+  <span class="json-key">"timezone"</span>:   <span class="json-str">"US Eastern"</span>,
+  <span class="json-key">"slot"</span>:       <span class="json-str">"Slot B - 13:00 UTC"</span>,
+  <span class="json-key">"goal"</span>:       <span class="json-str">"Evaluating Claude API integration patterns…"</span>,
+  <span class="json-key">"sourcePage"</span>: <span class="json-str">"https://derricksobrien.github.io/free-lab-tour/?lab=anthropic"</span>
+}</pre>
+    </div>
+
+    <div class="flow-arrow"><span class="arrow-label">201 Created</span></div>
+
+    <div class="api-block">
+      <div class="api-block-header">
+        <span class="method-badge method-post">Response</span>
+        <span class="api-url">HTTP 201 — application/json</span>
+      </div>
+      <pre class="json"><span class="json-comment">// Success response</span>
+{
+  <span class="json-key">"status"</span>:       <span class="json-str">"stored"</span>,
+  <span class="json-key">"bookingId"</span>:    <span class="json-str">"BK-20260506-a3f7c2d1"</span>,
+  <span class="json-key">"sessionId"</span>:    <span class="json-str">"f4a8c2e1b7d04e6a9c3f1d2e5b8a7c04"</span>,
+  <span class="json-key">"accessToken"</span>:  <span class="json-str">"Rk9Yv2mXqzP8LdN3wJeA7bKcQs5uVfT"</span>,
+  <span class="json-key">"accessPath"</span>:   <span class="json-str">"/api/access/Rk9Yv2mXqzP8LdN3wJeA7bKcQs5uVfT"</span>,
+  <span class="json-key">"expiresAtUtc"</span>: <span class="json-str">"2026-05-09T13:00:00+00:00"</span>   <span class="json-comment">// 72 hours from booking</span>
+}</pre>
+    </div>
+
+    <div class="callout">
+      <span class="callout-icon">🔑</span>
+      <div><strong>Token generation:</strong> <code>accessToken</code> is created with Python's
+      <code>secrets.token_urlsafe(24)</code> — 32 URL-safe characters, cryptographically random.
+      It expires 72 hours from booking time. The token is also indexed in SQLite for fast lookup.</div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-icon">🛡️</span>
+      <div><strong>Error responses:</strong> missing/invalid fields return <code>HTTP 422</code> with
+      <code>{"error": "Missing required field: email"}</code>. Rate limiting on the access endpoint
+      returns <code>HTTP 429</code> after 20 requests per 60-second window per session.</div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────── STEP 4 ── -->
+  <div class="step" id="step-4">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div>
+        <h2>Booking confirmation state</h2>
+        <p>The form resets and a success status message shows the booking ID and access token.</p>
+      </div>
+    </div>
+
+    <p class="step-desc">
+      On a successful <code>201</code> response, the form is reset, the status line displays the
+      booking ID and access token, and the access token is automatically copied into the "Student access"
+      section below — so the student can immediately click "Load my lab access" without copy-pasting.
+    </p>
+
+    <div class="screenshot">
+      <div class="screenshot-bar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="url-bar">https://derricksobrien.github.io/free-lab-tour/?lab=anthropic</div>
+      </div>
+      <div class="screenshot-body">
+        <p class="sim-section-label">Reserve your slot</p>
+        <p class="sim-h2">Register and get a token for student access.</p>
+        <div class="two-col">
+          <div class="sim-form">
+            <label class="sim-label">API endpoint
+              <input class="sim-input filled" readonly value="https://nexetra-backend.fly.dev">
+            </label>
+            <label class="sim-label">Full name
+              <input class="sim-input" readonly placeholder="Your name">
+            </label>
+            <label class="sim-label">Work email
+              <input class="sim-input" readonly placeholder="you@company.com">
+            </label>
+            <label class="sim-label">Preferred lab
+              <input class="sim-input" readonly placeholder="—">
+            </label>
+            <div class="sim-btn" style="opacity:0.5;cursor:default;">Request booking</div>
+            <div class="sim-status success">
+              ✓ Request captured. Booking ID: BK-20260506-a3f7c2d1. Access token: Rk9Yv2mXqzP8LdN3wJeA7bKcQs5uVfT
+            </div>
+          </div>
+          <div>
+            <div class="sim-panel" style="border-color:#1a5a38;">
+              <h3 style="color:var(--accent);">↓ Access section auto-filled</h3>
+              <p style="font-size:0.8rem;color:var(--muted);margin-bottom:0.75rem;">Scroll down — the token has been placed in the access form automatically.</p>
+              <label class="sim-label" style="display:flex;flex-direction:column;gap:4px;">Access token
+                <input class="sim-input highlight" readonly value="Rk9Yv2mXqzP8LdN3wJeA7bKcQs5uVfT" style="font-size:0.75rem;font-family:monospace;">
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-icon">⚡</span>
+      <div><strong>Zero copy-paste required:</strong> the JS success handler writes
+      <code>result.accessToken</code> directly into <code>#access-token</code> input and sets
+      <code>#access-api-base</code> to match — the student just scrolls and clicks.</div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────── STEP 5 ── -->
+  <div class="step" id="step-5">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div>
+        <h2>Use the access token to load lab instructions</h2>
+        <p>Student scrolls to the "Student access" section and clicks "Load my lab access".</p>
+      </div>
+    </div>
+
+    <p class="step-desc">
+      The access form sends a <code>GET /api/access/&lt;token&gt;</code> request. The backend validates
+      the token has not expired, looks up the matching lab in <code>LAB_ACCESS_MAP</code>, and returns
+      lab-specific instructions, the GitHub repo URL, and the catalog path.
+    </p>
+
+    <div class="screenshot">
+      <div class="screenshot-bar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="url-bar">https://derricksobrien.github.io/free-lab-tour/#access</div>
+      </div>
+      <div class="screenshot-body">
+        <p class="sim-section-label">Student access</p>
+        <p class="sim-h2">Load lab instructions and entry points with your booking token.</p>
+        <div class="two-col">
+          <div class="sim-form">
+            <label class="sim-label">API endpoint
+              <input class="sim-input filled" readonly value="https://nexetra-backend.fly.dev">
+            </label>
+            <label class="sim-label">Access token
+              <input class="sim-input filled highlight" readonly value="Rk9Yv2mXqzP8LdN3wJeA7bKcQs5uVfT" style="font-size:0.75rem;font-family:monospace;">
+            </label>
+            <div class="sim-btn">Load my lab access</div>
+            <div class="sim-status" style="background:#0a1a2e;color:#6b8ca8;border:1px solid #1e3048;">Checking access token…</div>
+          </div>
+          <div style="height:80px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:0.82rem;">
+            — panel hidden until token resolves —
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="api-block" style="margin-top:1.25rem">
+      <div class="api-block-header">
+        <span class="method-badge method-get">GET</span>
+        <span class="api-url">https://nexetra-backend.fly.dev/api/access/Rk9Yv2mXqzP8LdN3wJeA7bKcQs5uVfT</span>
+      </div>
+      <pre class="json"><span class="json-comment">// No request body — token is in the URL path</span>
+<span class="json-comment">// Session cookie nexetra_session included automatically (credentials: "include")</span></pre>
+    </div>
+
+    <div class="flow-arrow"><span class="arrow-label">200 OK</span></div>
+
+    <div class="api-block">
+      <div class="api-block-header">
+        <span class="method-badge method-get">Response</span>
+        <span class="api-url">HTTP 200 — application/json</span>
+      </div>
+      <pre class="json">{
+  <span class="json-key">"bookingId"</span>:    <span class="json-str">"BK-20260506-a3f7c2d1"</span>,
+  <span class="json-key">"labTitle"</span>:     <span class="json-str">"Claude API in Action"</span>,
+  <span class="json-key">"slot"</span>:         <span class="json-str">"Slot B - 13:00 UTC"</span>,
+  <span class="json-key">"expiresAtUtc"</span>: <span class="json-str">"2026-05-09T13:00:00+00:00"</span>,
+  <span class="json-key">"repoUrl"</span>:      <span class="json-str">"https://github.com/derricksobrien/nexetra-lab-01-claude-api-tour"</span>,
+  <span class="json-key">"catalogPath"</span>:  <span class="json-str">"../catalog.html?track=anthropic"</span>,
+  <span class="json-key">"catalogLabel"</span>: <span class="json-str">"Open Anthropic track catalog"</span>,
+  <span class="json-key">"instructions"</span>: [
+    <span class="json-str">"Clone the Lab 01 repository and run scripts/setup.ps1."</span>,
+    <span class="json-str">"Use scripts/run-lab.ps1 -Stage all for a dry run."</span>,
+    <span class="json-str">"Add ANTHROPIC_API_KEY in .env before live mode."</span>
+  ]
+}</pre>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────── STEP 6 ── -->
+  <div class="step" id="step-6">
+    <div class="step-header">
+      <div class="step-num">6</div>
+      <div>
+        <h2>Access panel reveals lab entry points</h2>
+        <p>The hidden panel renders with instructions, GitHub repo button, and catalog link.</p>
+      </div>
+    </div>
+
+    <p class="step-desc">
+      The <code>renderAccessPanel()</code> function populates the hidden <code>#access-panel</code>
+      div and sets <code>display: block</code>. The student now has one-click access to the lab
+      repository and the matching catalog track.
+    </p>
+
+    <div class="screenshot">
+      <div class="screenshot-bar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="url-bar">https://derricksobrien.github.io/free-lab-tour/#access</div>
+      </div>
+      <div class="screenshot-body">
+        <p class="sim-section-label">Student access</p>
+        <p class="sim-h2">Load lab instructions and entry points with your booking token.</p>
+
+        <div class="success-banner">
+          <span class="check">✓</span>
+          <div>
+            <div class="title">Access unlocked.</div>
+            <div class="sub">Use the links to enter your lab and instructions.</div>
+          </div>
+        </div>
+
+        <div class="sim-grid">
+          <div class="sim-form">
+            <label class="sim-label">API endpoint
+              <input class="sim-input filled" readonly value="https://nexetra-backend.fly.dev">
+            </label>
+            <label class="sim-label">Access token
+              <input class="sim-input filled" readonly value="Rk9Yv2mXqzP8LdN3wJeA7bKcQs5uVfT" style="font-size:0.75rem;font-family:monospace;">
+            </label>
+            <div class="sim-btn" style="opacity:0.5;">Load my lab access</div>
+            <div class="sim-status success">✓ Access unlocked. Use the links to enter your lab and instructions.</div>
+          </div>
+
+          <div class="sim-panel" style="border-color:#1a5a38;">
+            <h3 style="color:var(--accent);">Claude API in Action access ready</h3>
+            <p class="sim-expire">Token expires: 2026-05-09T13:00:00+00:00</p>
+            <ul>
+              <li>Clone the Lab 01 repository and run scripts/setup.ps1.</li>
+              <li>Use scripts/run-lab.ps1 -Stage all for a dry run.</li>
+              <li>Add ANTHROPIC_API_KEY in .env before live mode.</li>
+            </ul>
+            <div class="btn-grid" style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+              <span class="sim-btn-secondary">Open lab repository ↗</span>
+              <span class="sim-btn-secondary" style="border-color:var(--accent2);color:var(--accent2);">Open Anthropic track catalog</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="callout-icon">📋</span>
+      <div><strong>Three labs, same flow.</strong> The same token-lookup pattern works for all three labs.
+      The <code>LAB_ACCESS_MAP</code> in <code>backend/app.py</code> normalises the lab name from the
+      booking record and returns lab-specific instructions, repo URL, and catalog path for each.</div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────── STEP 7 ── -->
+  <div class="step" id="step-7">
+    <div class="step-header">
+      <div class="step-num">7</div>
+      <div>
+        <h2>What is stored in the database</h2>
+        <p>SQLite record written at booking time. No payment data, no secrets.</p>
+      </div>
+    </div>
+
+    <p class="step-desc">
+      The <code>bookings</code> table in <code>backend/bookings.db</code> stores one row per
+      registration. The <code>access_token</code> column is indexed for fast lookup on the access
+      endpoint. The file is gitignored and never committed to source control.
+    </p>
+
+    <table class="data-table" style="margin-top:0;">
+      <thead>
+        <tr><th>Column</th><th>Example value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>id</td><td><code>1</code></td><td>Auto-increment primary key</td></tr>
+        <tr><td>booking_id</td><td><code>BK-20260506-a3f7c2d1</code></td><td>UUID-based, unique, returned to client</td></tr>
+        <tr><td>session_id</td><td><code>f4a8c2e1b7d04e6a…</code></td><td>From session cookie — links bookings to browser</td></tr>
+        <tr><td>created_at_utc</td><td><code>2026-05-06T13:00:00+00:00</code></td><td>ISO 8601 UTC timestamp</td></tr>
+        <tr><td>name</td><td><code>Alex Chen</code></td><td>As entered — not normalised</td></tr>
+        <tr><td>email</td><td><code>alex.chen@techcorp.io</code></td><td>Validated: contains @, not start/end with @</td></tr>
+        <tr><td>lab</td><td><code>Claude API in Action</code></td><td>Dropdown option value; normalised on access lookup</td></tr>
+        <tr><td>user_timezone</td><td><code>US Eastern</code></td><td>Free-text — stored for scheduling context</td></tr>
+        <tr><td>slot</td><td><code>Slot B - 13:00 UTC</code></td><td>One of four rotating slots</td></tr>
+        <tr><td>goal</td><td><code>Evaluating Claude API…</code></td><td>Optional — stored for CRM context</td></tr>
+        <tr><td>source_page</td><td><code>https://…/free-lab-tour/?lab=anthropic</code></td><td>Full URL of page at submit time</td></tr>
+        <tr><td>user_agent</td><td><code>Mozilla/5.0…</code></td><td>Truncated to 255 chars</td></tr>
+        <tr><td>access_token</td><td><code>Rk9Yv2mXqzP8LdN3wJeA7bKcQs5uVfT</code></td><td><code>secrets.token_urlsafe(24)</code> — indexed</td></tr>
+        <tr><td>access_expires_at_utc</td><td><code>2026-05-09T13:00:00+00:00</code></td><td>booking time + 72 hours</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout" style="margin-top:1.25rem;">
+      <span class="callout-icon">📡</span>
+      <div><strong>GET /api/my-bookings</strong> returns all bookings linked to the current session cookie —
+      useful for support, debugging, and building a "my bookings" view. Call it from the browser console:
+      <code>fetch('/api/my-bookings', {credentials:'include'}).then(r=>r.json()).then(console.log)</code></div>
+    </div>
+
+    <div class="api-block" style="margin-top:1rem;">
+      <div class="api-block-header">
+        <span class="method-badge method-get">GET</span>
+        <span class="api-url">/api/my-bookings — session-scoped booking history</span>
+      </div>
+      <pre class="json">{
+  <span class="json-key">"sessionId"</span>: <span class="json-str">"f4a8c2e1b7d04e6a9c3f1d2e5b8a7c04"</span>,
+  <span class="json-key">"bookings"</span>: [
+    {
+      <span class="json-key">"booking_id"</span>:           <span class="json-str">"BK-20260506-a3f7c2d1"</span>,
+      <span class="json-key">"created_at_utc"</span>:       <span class="json-str">"2026-05-06T13:00:00+00:00"</span>,
+      <span class="json-key">"name"</span>:                 <span class="json-str">"Alex Chen"</span>,
+      <span class="json-key">"email"</span>:                <span class="json-str">"alex.chen@techcorp.io"</span>,
+      <span class="json-key">"lab"</span>:                  <span class="json-str">"Claude API in Action"</span>,
+      <span class="json-key">"slot"</span>:                 <span class="json-str">"Slot B - 13:00 UTC"</span>,
+      <span class="json-key">"access_token"</span>:        <span class="json-str">"Rk9Yv2mXqzP8LdN3wJeA7bKcQs5uVfT"</span>,
+      <span class="json-key">"access_expires_at_utc"</span>: <span class="json-str">"2026-05-09T13:00:00+00:00"</span>
+    }
+  ]
+}</pre>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────── SUMMARY ── -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem 2rem 1.75rem;">
+    <p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin-bottom:0.75rem;">Summary</p>
+    <h2 style="font-size:1.15rem;color:#fff;margin-bottom:1rem;">Complete flow in one view</h2>
+    <div style="display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:0.75rem;align-items:center;padding:0.65rem 1rem;border-bottom:1px solid var(--border);background:#0c1520;">
+        <span style="background:#1a3a5c;color:var(--step-num);font-weight:800;font-size:0.75rem;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;">1</span>
+        <span style="font-size:0.85rem;">Student opens <code>free-lab-tour/?lab=anthropic</code> → lab dropdown pre-selected</span>
+      </div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:0.75rem;align-items:center;padding:0.65rem 1rem;border-bottom:1px solid var(--border);">
+        <span style="background:#1a3a5c;color:var(--step-num);font-weight:800;font-size:0.75rem;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;">2</span>
+        <span style="font-size:0.85rem;">Fills form with name, email, lab, timezone, slot, goal</span>
+      </div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:0.75rem;align-items:center;padding:0.65rem 1rem;border-bottom:1px solid var(--border);background:#0c1520;">
+        <span style="background:#1a3a5c;color:var(--step-num);font-weight:800;font-size:0.75rem;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;">3</span>
+        <span style="font-size:0.85rem;"><code>POST /api/bookings</code> → <code>201</code> → <code>bookingId</code> + <code>accessToken</code></span>
+      </div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:0.75rem;align-items:center;padding:0.65rem 1rem;border-bottom:1px solid var(--border);">
+        <span style="background:#1a3a5c;color:var(--step-num);font-weight:800;font-size:0.75rem;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;">4</span>
+        <span style="font-size:0.85rem;">Token auto-filled into access form — no copy-paste needed</span>
+      </div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:0.75rem;align-items:center;padding:0.65rem 1rem;border-bottom:1px solid var(--border);background:#0c1520;">
+        <span style="background:#1a3a5c;color:var(--step-num);font-weight:800;font-size:0.75rem;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;">5</span>
+        <span style="font-size:0.85rem;"><code>GET /api/access/&lt;token&gt;</code> → backend validates expiry + maps lab</span>
+      </div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:0.75rem;align-items:center;padding:0.65rem 1rem;border-bottom:1px solid var(--border);">
+        <span style="background:#1a3a5c;color:var(--step-num);font-weight:800;font-size:0.75rem;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;">6</span>
+        <span style="font-size:0.85rem;">Access panel renders: instructions + GitHub repo link + catalog track link</span>
+      </div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:0.75rem;align-items:center;padding:0.65rem 1rem;background:#0c1520;">
+        <span style="background:#1a3a5c;color:var(--step-num);font-weight:800;font-size:0.75rem;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;">7</span>
+        <span style="font-size:0.85rem;">Full booking record stored in SQLite — token valid for 72 hours</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <p><a href="../free-lab-tour/">← Free Lab Tour</a> &nbsp;·&nbsp; <a href="../index.html">Nexetra Hub</a> &nbsp;·&nbsp; <a href="../catalog.html">Course Catalog</a></p>
+    <p style="margin-top:0.5rem;">Nexetra · Free Lab Tour Registration System · Documentation</p>
+  </div>
+
+</div>
+
+</body>
+</html>
